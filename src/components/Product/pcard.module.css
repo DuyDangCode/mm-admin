@@ -1,0 +1,10 @@
+.containerCard {
+    transition: 0.5s;
+    
+}
+
+.containerCard:hover {
+    /* border: 2px solid red; */
+    transform: translate(0, -10px);
+}
+

@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer tailwind {
+  @tailwind base;
+}
+@tailwind components;
+@tailwind utilities;
+@import 'leaflet/dist/leaflet.css';
+
+.pagination-control {
+  &[data-active] {
+    background-color: var(--mantine-color-turquoise-6) !important;
+    --_control-border-color: var(--pagination-active-bg) !important;
+    --_control-color: var(--mantine-color-white);
+  }
+}
+a:link,
+a:visited {
+  color: var(--mantine-color-turquoise-6);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:link:active,
+a:visited:active {
+  color: var(--mantine-color-turquoise-6);
+}
+
+/* Mobile */
+.hidden-mobile {
+  @media (max-width: 38.625em) {
+    /* display: none!important; */
+  }
+}
+
+.hidden-tablet {
+  /* Tablet  */
+  @media (max-width: 48em) {
+    display: none !important;
+  }
+}
+
+.hidden-desktop {
+  /* Desktop  */
+  @media (min-width: 38.625em) {
+    display: none !important;
+  }
+}
+
+.overlay {
+  z-index: 1;
+  @media (max-width: 38.625em) {
+    z-index: 1001;
+  }
+}
+.z-1000 {
+  z-index: 1000;
+}
+.z-1001 {
+  z-index: 1001;
+}
+.form {
+  width: 30vw;
+  @media (max-width: 48em) {
+    width: 75vw;
+  }
+  @media (max-width: 38.625em) {
+    width: 100%;
+  }
+}
+
+.page-container {
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  z-index: 1;
+  background-color: var(--mantine-color-gray-1);
+}

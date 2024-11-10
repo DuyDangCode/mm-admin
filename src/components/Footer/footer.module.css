@@ -1,0 +1,8 @@
+.container{
+    height: calc(16.25rem * var(--mantine-scale));
+
+    @media (max-width: 70rem){
+        height: calc(30.4rem * var(--mantine-scale));
+    }
+}
+
