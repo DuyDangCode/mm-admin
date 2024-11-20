@@ -16,7 +16,7 @@ import {
   Loader,
   Title,
 } from '@mantine/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useContext } from 'react'
 import UserContext from '@/contexts/UserContext'
@@ -37,6 +37,7 @@ const comboboxStyles: ComboboxProps = {
 }
 export default function OnlineOrderSegment() {
   const [activePage, setPage] = useState(1)
+  const [startLocation, setStartLocation] = useState<string | null>(null)
 
   const { user } = useContext(UserContext)
   const [selectedOrders, setSelectedOrders] = useState<any>([])
@@ -80,11 +81,11 @@ export default function OnlineOrderSegment() {
       return
     }
     console.log(selectedOrders.map((item: any) => item.id))
-
     const deliveryService = new DeliveryService(user)
     toast.promise(
       deliveryService.createDelivery(
         selectedOrders.map((item: any) => item.id),
+        startLocation,
       ),
       {
         loading: '',
@@ -93,6 +94,19 @@ export default function OnlineOrderSegment() {
       },
     )
   }
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log('Vị trí hiện tại:', position.coords)
+        setStartLocation(
+          `${position.coords.latitude},${position.coords.longitude}`,
+        )
+      },
+      (error) => {
+        console.error('Lỗi khi lấy vị trí:', error)
+      },
+    )
+  }, [])
 
   return (
     <ScrollArea className='h-full w-full z-[0]' py='1rem' px='2rem'>

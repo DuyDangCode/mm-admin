@@ -18,6 +18,7 @@ function Map({ allPositions, zoom }: LeafletMapProps) {
   const [zoomState] = useState(zoom)
 
   useEffect(() => {
+    if (!allPositions) return
     if (map.current) return // stops map from intializing more than once
 
     map.current = new L.Map(mapContainer.current, {

@@ -15,15 +15,6 @@ export default function DeliveryPage() {
   const [allPositions, setAllPositions] = useState<Pos[]>([{ lat: 0, lng: 0 }])
   const { user } = useContext(UserContext)
 
-  const Map = useMemo(
-    () =>
-      dynamic(() => import('@/components/Map/LeafletMap'), {
-        loading: () => <p>A map is loading</p>,
-        ssr: false,
-      }),
-    [],
-  )
-
   const deliveryQuery = useQuery({
     queryKey: ['deliveries'],
     queryFn: async () => {
@@ -44,30 +35,10 @@ export default function DeliveryPage() {
     },
     enabled: !!user,
   })
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log('Vị trí hiện tại:', position.coords)
-        setAllPositions([
-          { lat: position.coords.latitude, lng: position.coords.longitude },
-          { lat: 10.924067, lng: 106.713028 },
-          { lat: 10.045162, lng: 105.746857 },
-          { lat: 10.762622, lng: 106.660172 },
-          { lat: position.coords.latitude, lng: position.coords.longitude },
-        ])
-      },
-      (error) => {
-        console.error('Lỗi khi lấy vị trí:', error)
-      },
-    )
-  }, [])
   return (
     <div className='w-full h-full'>
-          
-        <Link href={'/delivery/add-delivery'}>Add new delivery</Link>
-        <DeliveryTable deliveries={deliveryQuery.data} />
-          
+      <Link href={'/delivery/add-delivery'}>Add new delivery</Link>
+      <DeliveryTable deliveries={deliveryQuery.data} />
 
       {/* <Map allPositions={allPositions} zoom={15} /> */}
       {/* <Map */}
