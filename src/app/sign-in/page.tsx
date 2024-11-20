@@ -10,7 +10,7 @@ import {
   Group,
   Stack,
   Anchor,
-  Box
+  Box,
 } from '@mantine/core'
 import displayImg from '@/public/pic/display-img.png'
 import { SignInForm } from './signInForm'
@@ -23,7 +23,7 @@ export default function page() {
       pb='2.5rem'
       px='8.4vw'
       mih='100%'
-      justify='space-between'
+      justify='center'
       align='self-start'
       pos='fixed'
       top='0'
@@ -52,14 +52,6 @@ export default function page() {
         <Title order={2}>Đăng nhập</Title>
         <SignInForm />
       </Stack>
-      <Image
-        component={NextImage}
-        src={displayImg}
-        alt=''
-        radius='3rem'
-        w='45vw'
-        h='33.3125rem'
-      />
     </Flex>
   )
 }

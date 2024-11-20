@@ -8,7 +8,7 @@ import {
   rem,
   Loader,
   Stack,
-  Notification
+  Notification,
 } from '@mantine/core'
 // import '../../app/global.css';
 import {
@@ -17,7 +17,7 @@ import {
   IconLogout,
   IconUser,
   IconChecklist,
-  IconBell
+  IconBell,
 } from '@tabler/icons-react'
 import classes from './header.module.css'
 import { useRouter } from 'next/navigation'
@@ -40,7 +40,7 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
       const notificationsService = new NotificationService(user)
       return notificationsService.getNotification()
     },
-    enabled: !!user
+    enabled: !!user,
   })
 
   const onClickFunction: OnClickInterface = {
@@ -52,10 +52,10 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
       setUser({
         userId: null,
         roles: [],
-        accessToken: null
+        accessToken: null,
       })
       queryClient.clear()
-    }
+    },
   }
   const handleOnClickOnMenu = (type: string) => {
     return onClickFunction[type]()
@@ -72,27 +72,23 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
           <IconBell color='#02B1AB' className={classes.hoverIcon} />
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item
-          // leftSection={
-          //   <IconUser style={{ width: rem(14), height: rem(14) }} />
-          // }
-          // onClick={() => handleOnClickOnMenu('details')}
-          >
-            <Stack key={Math.random()}>
+          <Menu.Item>
+            <Stack>
               {notifications.isLoading && <Loader color='#02B1AB' />}
               {notifications.isSuccess &&
-                notifications.data.map((notification: ManagerNotification) => (
-                  <Notification
-                    title='Sản phẩm sắp hết hàng'
-                    onClick={() =>
-                      router.push(
-                        `/manager/warehouse/instock/${notification._id}`
-                      )
-                    }
-                  >
-                    {notification.product_name}
-                  </Notification>
-                ))}
+                notifications.data.map(
+                  (notification: ManagerNotification, index) => (
+                    <Notification
+                      title='Sản phẩm sắp hết hàng'
+                      key={index}
+                      onClick={() =>
+                        router.push(`/warehouse/instock/${notification._id}`)
+                      }
+                    >
+                      {notification.product_name}
+                    </Notification>
+                  ),
+                )}
             </Stack>
           </Menu.Item>
         </Menu.Dropdown>

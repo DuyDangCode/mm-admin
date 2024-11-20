@@ -1,6 +1,6 @@
-'use client';
-import CalendarInput from '@/components/CalendarInput/calendarInput';
-import { chunk } from '@/utils/array';
+'use client'
+import CalendarInput from '@/components/CalendarInput/calendarInput'
+import { chunk } from '@/utils/array'
 import {
   ComboboxProps,
   Fieldset,
@@ -17,27 +17,27 @@ import {
   Skeleton,
   Loader,
   Title,
-} from '@mantine/core';
-import { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+} from '@mantine/core'
+import { Suspense, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
-import { useContext } from 'react';
-import UserContext from '@/contexts/UserContext';
-import { useQuery } from '@tanstack/react-query';
-import OrderService from '@/services/orderService';
-import TableSkeleton from '@/components/Skeleton/tableSkeleton';
-import OrderTable from './orderTable';
+import { useContext } from 'react'
+import UserContext from '@/contexts/UserContext'
+import { useQuery } from '@tanstack/react-query'
+import OrderService from '@/services/orderService'
+import TableSkeleton from '@/components/Skeleton/tableSkeleton'
+import OrderTable from './orderTable'
 
-const dates = ['Ngày', 'Tuần', 'Tháng', 'Quý', 'Năm'];
+const dates = ['Ngày', 'Tuần', 'Tháng', 'Quý', 'Năm']
 const dateMapping = {
   Ngày: 'day',
   Tuần: 'week',
   Tháng: 'month',
   Quý: 'quarter',
   Năm: 'year',
-};
+}
 
-const paymentState = ['Tất cả', 'Đã thanh toán', 'Chưa thanh toán'];
+const paymentState = ['Tất cả', 'Đã thanh toán', 'Chưa thanh toán']
 const shipmentState = [
   'Tất cả',
   'Chờ xác nhận',
@@ -47,7 +47,7 @@ const shipmentState = [
   'Đã giao',
   'Giao thất bại',
   'Giao thành công',
-];
+]
 const shipmentStatusMapping = {
   'Tất cả': '',
   'Chờ xác nhận': 'pending',
@@ -57,58 +57,58 @@ const shipmentStatusMapping = {
   'Đã hủy': 'cancelled',
   'Giao thất bại': 'failed',
   'Giao thành công': 'delivered',
-};
+}
 
 const paymentStatusMapping = {
   'Tất cả': '',
   'Chưa thanh toán': 'pending',
   'Đã thanh toán': 'paid',
-};
+}
 
 const comboboxStyles: ComboboxProps = {
   transitionProps: { transition: 'pop', duration: 200 },
   shadow: 'md',
-};
+}
 export default function OnlineOrderSegment() {
-  const [activePage, setPage] = useState(1);
+  const [activePage, setPage] = useState(1)
   // filter
-  const [date, setDate] = useState<string | null>(dates[0]);
+  const [date, setDate] = useState<string | null>(dates[0])
   const [paymentFilter, setPaymentFilter] = useState<string | null>(
-    paymentState[0]
-  );
+    paymentState[0],
+  )
   const [shipmentFilter, setShipmentFilter] = useState<string | null>(
-    shipmentState[0]
-  );
-  const { user } = useContext(UserContext);
+    shipmentState[0],
+  )
+  const { user } = useContext(UserContext)
   const orders = useQuery({
     queryKey: [
       'orders',
       activePage,
       shipmentStatusMapping[
-      shipmentFilter as keyof typeof shipmentStatusMapping
+        shipmentFilter as keyof typeof shipmentStatusMapping
       ],
     ],
     queryFn: () => {
-      const orderService = new OrderService(user);
+      const orderService = new OrderService(user)
       return orderService.getAllOrder(
         10,
         activePage,
         shipmentStatusMapping[
-        shipmentFilter as keyof typeof shipmentStatusMapping
-        ]
-      );
+          shipmentFilter as keyof typeof shipmentStatusMapping
+        ],
+      )
     },
     enabled: !!user,
-  });
+  })
 
   const numberOfOrder = useQuery({
     queryKey: ['numberOfOrder'],
     queryFn: () => {
-      const orderService = new OrderService(user);
-      return orderService.getNumberOfOrder();
+      const orderService = new OrderService(user)
+      return orderService.getNumberOfOrder()
     },
     enabled: !!user,
-  });
+  })
 
   // const handleFilter = (data: any) => {
   //     return data.filter((item: any) => {
@@ -119,7 +119,7 @@ export default function OnlineOrderSegment() {
   //     })
   // }
   const calPages = (num: any) => {
-    let total: number;
+    let total: number
     switch (shipmentFilter) {
       case shipmentState[0]:
         return (
@@ -130,75 +130,85 @@ export default function OnlineOrderSegment() {
           num.shipped +
           num.failed +
           num.delivered
-        );
+        )
       case shipmentState[1]:
-        return num.pending;
+        return num.pending
       case shipmentState[2]:
-        return num.confirmed;
+        return num.confirmed
       case shipmentState[3]:
-        return num.cancelled;
+        return num.cancelled
       case shipmentState[4]:
-        return num.shipping;
+        return num.shipping
       case shipmentState[5]:
-        return num.shipped;
+        return num.shipped
       case shipmentState[6]:
-        return num.failed;
+        return num.failed
       case shipmentState[7]:
-        return num.delivered;
+        return num.delivered
       default:
-        break;
+        break
     }
-  };
+  }
 
   return (
     <ScrollArea className='h-full w-full z-[0]' py='1rem' px='2rem'>
-      <Stack className='flex flex-col gap-[16px]'>
-        <Group justify='space-between'>
-          <Title order={4}>Quản lí đơn hàng</Title>
-          <Group>
-            <Text size='sm' fw='700'>Trạng thái giao hàng: </Text>
-            <Select
-              w='fit-content'
-              data={shipmentState}
-              value={shipmentFilter}
-              onChange={(value) => {
-                setShipmentFilter(value)
-                setPage(1)
-              }}
-              comboboxProps={comboboxStyles}
-            />
-          </Group>
-        </Group>
-
-
-        {orders.isPending || numberOfOrder.isPending ? (
-          <div className='w-full h-[500px] flex justify-center items-center'>
-            <Loader type='dots' />
-          </div>
-        ) : (
-          <div>
-            <Text>Số đơn hàng hiện có:
-              <span style={{ fontWeight: '700', color: 'var(--mantine-color-turquoise-6)' }}>
-                {calPages(numberOfOrder.data)}
-              </span>
-            </Text>
-            <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
-
-              <OrderTable orders={orders.data} />
-              <Pagination
-                classNames={{
-                  control: 'pagination-control',
+          
+        <Stack className='flex flex-col gap-[16px]'>
+          <Group justify='space-between'>
+            <Title order={4}>Quản lí đơn hàng</Title>
+            <Group>
+              <Text size='sm' fw='700'>
+                Trạng thái giao hàng:{' '}
+              </Text>
+              <Select
+                w='fit-content'
+                data={shipmentState}
+                value={shipmentFilter}
+                onChange={(value) => {
+                  setShipmentFilter(value)
+                  setPage(1)
                 }}
-                className='self-center'
-                total={Math.ceil(calPages(numberOfOrder.data) as number / 10)}
-                value={activePage}
-                onChange={setPage}
-                mt='sm'
+                comboboxProps={comboboxStyles}
               />
+            </Group>
+          </Group>
+
+          {orders.isPending || numberOfOrder.isPending ? (
+            <div className='w-full h-[500px] flex justify-center items-center'>
+              <Loader type='dots' />
             </div>
-          </div>
-        )}
-      </Stack>
+          ) : (
+            <div>
+              <Text>
+                Số đơn hàng hiện có:{' '}
+                <span
+                  style={{
+                    fontWeight: '700',
+                    color: 'var(--mantine-color-turquoise-6)',
+                  }}
+                >
+                  {calPages(numberOfOrder.data)}
+                </span>
+              </Text>
+              <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
+                <OrderTable orders={orders.data} />
+                <Pagination
+                  classNames={{
+                    control: 'pagination-control',
+                  }}
+                  className='self-center'
+                  total={Math.ceil(
+                    (calPages(numberOfOrder.data) as number) / 10,
+                  )}
+                  value={activePage}
+                  onChange={setPage}
+                  mt='sm'
+                />
+              </div>
+            </div>
+          )}
+        </Stack>
+          
     </ScrollArea>
-  );
+  )
 }

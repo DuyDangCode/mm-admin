@@ -19,11 +19,11 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Material Mastery Admin',
-  description: 'Admin page for material Mastery'
+  description: 'Admin page for material Mastery',
 }
 
 export default function RootLayout({
-  children
+  children,
 }: {
   children: React.ReactNode
 }) {
@@ -37,15 +37,17 @@ export default function RootLayout({
         className={`${inter.className} h-full`}
         style={{ backgroundColor: '#f1f2f5' }}
       >
-        <Providers>
-          <MantineProvider theme={theme} defaultColorScheme='light'>
-            <TanStackProvider>
-              <Header />
-              <Suspense fallback={<Loading />}>{children}</Suspense>
-              <Footer />
-            </TanStackProvider>
-          </MantineProvider>
-        </Providers>
+        <Suspense>
+          <Providers>
+            <MantineProvider theme={theme} defaultColorScheme='light'>
+              <TanStackProvider>
+                <Header />
+                {children}
+                <Footer />
+              </TanStackProvider>
+            </MantineProvider>
+          </Providers>
+        </Suspense>
       </body>
     </html>
   )

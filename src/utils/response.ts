@@ -1,5 +1,4 @@
-import { Bill_Info_Export, Bill_Info_Import, Bill_Product } from "./object"
-
+import { Bill_Info_Export, Bill_Info_Import, Bill_Product } from './object'
 
 export interface Category {
   _id: string
@@ -37,14 +36,20 @@ export interface UserAttributes {
   __v: number
 }
 
-
-
+export type TableType = {
+  id: string
+  createAt: string
+  customer: string
+  paymentStatus: string
+  shipmentStatus: string
+  finalPrice: number
+  address: string
+}[]
 
 export interface Product_Category {
   _id: string
   category_name: string
 }
-
 
 export interface Product {
   _id: string
@@ -107,7 +112,13 @@ export interface Order_Checkout {
   finalPrice: number
 }
 
-export enum Order_StatusEnum { 'pending', 'confirmed', 'shipped', 'cancelled', 'shipping' }
+export enum Order_StatusEnum {
+  'pending',
+  'confirmed',
+  'shipped',
+  'cancelled',
+  'shipping',
+}
 export interface Order_Payment {
   status: string
   method: string
@@ -133,12 +144,10 @@ export interface Order {
 }
 
 export interface UserInterface {
-  userId: any;
-  roles: any;
-  accessToken: any;
+  userId: any
+  roles: any
+  accessToken: any
 }
-
-
 
 export interface Bill_Import {
   bill_info: Bill_Info_Import
@@ -156,17 +165,17 @@ export interface NumOfBill {
 }
 
 export interface RevenueResInterface {
-  revenue: number;
-  profit: number;
+  revenue: number
+  profit: number
 }
-export interface ChartInterface { }
+export interface ChartInterface {}
 export interface StatsInterface {
-  selectTime: RevenueResInterface;
-  preTime: RevenueResInterface;
+  selectTime: RevenueResInterface
+  preTime: RevenueResInterface
 }
 export interface ChartInterface {
-  revenue: Array<number>;
-  profit: Array<number>;
+  revenue: Array<number>
+  profit: Array<number>
 }
 
 export interface ManagerNotification {
@@ -208,3 +217,4 @@ export interface Voucher {
   updatedAt: string
   __v: number
 }
+

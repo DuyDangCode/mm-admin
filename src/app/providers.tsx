@@ -5,7 +5,7 @@ import { redirect, usePathname, useSearchParams } from 'next/navigation'
 import { Toaster } from 'react-hot-toast'
 import { useDeepCompareEffect } from 'react-use'
 
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import UserContext from '@/contexts/UserContext'
 import { UserInterface } from '@/utils/response'
 import queryClient from '@/helpers/client'
@@ -17,7 +17,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
   const defaultUser: UserInterface = {
     userId: null,
     roles: [],
-    accessToken: null
+    accessToken: null,
   }
   const [user, setUser, isUserSet] = useLocalStorage('user', defaultUser)
 

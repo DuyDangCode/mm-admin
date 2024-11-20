@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   Grid,
@@ -8,33 +8,32 @@ import {
   Container,
   Group,
   Button,
-} from '@mantine/core';
-import '@/styles/global.css';
-import { IconTrash } from '@tabler/icons-react';
-import CartItem from '../CartItem/cartItem';
-import useCart from '@/helpers/useCart';
-import { CartProduct } from '@/utils/response';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { formatMoney } from '@/utils/string';
-import useRQGlobalState from '@/helpers/useRQGlobalState';
-import { useRouter } from 'next/navigation';
-import { data } from 'cypress/types/jquery';
-import { Toaster, toast } from 'react-hot-toast';
-import queryClient from '@/helpers/client';
-import { useMutation } from '@tanstack/react-query';
-import CartService from '@/services/cartService';
-import UserContext from '@/contexts/UserContext';
-import { userService } from '@/services/userService';
+} from '@mantine/core'
+import '@/styles/global.css'
+import { IconTrash } from '@tabler/icons-react'
+import CartItem from '../CartItem/cartItem'
+import useCart from '@/helpers/useCart'
+import { CartProduct } from '@/utils/response'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { formatMoney } from '@/utils/string'
+import useRQGlobalState from '@/helpers/useRQGlobalState'
+import { useRouter } from 'next/navigation'
+import { Toaster, toast } from 'react-hot-toast'
+import queryClient from '@/helpers/client'
+import { useMutation } from '@tanstack/react-query'
+import CartService from '@/services/cartService'
+import UserContext from '@/contexts/UserContext'
+import { userService } from '@/services/userService'
 
 const Cart = () => {
-  const [cart, setCart] = useCart();
-  const [totalCost, setTotalCost] = useState(0);
-  const [allChecked, setAllChecked] = useState(false);
-  const productsChosen = useRef<CartProduct[]>([]);
-  const router = useRouter();
-  const [products, setProducts] = useRQGlobalState('productsChosen', []);
-  const [numberChecked, setNumberChecked] = useState(-1);
-  const { user } = useContext(UserContext);
+  const [cart, setCart] = useCart()
+  const [totalCost, setTotalCost] = useState(0)
+  const [allChecked, setAllChecked] = useState(false)
+  const productsChosen = useRef<CartProduct[]>([])
+  const router = useRouter()
+  const [products, setProducts] = useRQGlobalState('productsChosen', [])
+  const [numberChecked, setNumberChecked] = useState(-1)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     if (cart) {
@@ -42,40 +41,40 @@ const Cart = () => {
         numberChecked != -1 &&
         numberChecked == cart.cart_products.length - 1
       ) {
-        setAllChecked(true);
-        if (totalCost != 0 && !allChecked) setTotalCost(0);
+        setAllChecked(true)
+        if (totalCost != 0 && !allChecked) setTotalCost(0)
       }
     }
-  }, [numberChecked]);
+  }, [numberChecked])
 
   useEffect(() => {
     queryClient.prefetchQuery({
       queryKey: ['userInfor'],
       queryFn: () => {
-        return userService.getUserById(user);
+        return userService.getUserById(user)
       },
-    });
-  }, []);
+    })
+  }, [])
 
   const addCost = (cost: number) => {
-    if (cost == -1) setTotalCost(0);
-    else setTotalCost((prev) => prev + cost);
-  };
+    if (cost == -1) setTotalCost(0)
+    else setTotalCost((prev) => prev + cost)
+  }
 
   const deleteMutation = useMutation({
     mutationKey: ['deleteProductCart'],
     mutationFn: (productId: string) => {
-      const cartService = new CartService(user);
-      return cartService.deleteProduct(productId);
+      const cartService = new CartService(user)
+      return cartService.deleteProduct(productId)
     },
     onSuccess: (res) => {
-      console.log('delete success: ', res);
+      console.log('delete success: ', res)
     },
     onError: (err) => {
-      console.log('delete fail: ', err);
+      console.log('delete fail: ', err)
     },
     onSettled: () => {},
-  });
+  })
 
   const updateQuantityMutation = useMutation({
     mutationKey: ['updateQuantityCart'],
@@ -84,16 +83,12 @@ const Cart = () => {
       quantity,
       oldQuantity,
     }: {
-      productId: string;
-      quantity: string | number;
-      oldQuantity: string | number;
+      productId: string
+      quantity: string | number
+      oldQuantity: string | number
     }) => {
-      const cartService = new CartService(user);
-      return cartService.updateQuantityProduct(
-        productId,
-        quantity,
-        oldQuantity
-      );
+      const cartService = new CartService(user)
+      return cartService.updateQuantityProduct(productId, quantity, oldQuantity)
     },
     onSuccess: (res) => {
       // console.log('update success: ', res);
@@ -102,54 +97,54 @@ const Cart = () => {
       // console.log('update fail: ', err);
     },
     onSettled: () => {},
-  });
+  })
 
   const deleteOne = (id: string) => {
-    const data = structuredClone(cart);
+    const data = structuredClone(cart)
 
     for (let i = 0; i < data.cart_products.length; i++) {
       if (data.cart_products[i].productId == id) {
-        data.cart_products.splice(i, 1);
-        break;
+        data.cart_products.splice(i, 1)
+        break
       }
     }
-    deleteMutation.mutate(id);
-    setCart(data);
-    toast.success('Xóa sản phẩm thành công.');
-  };
+    deleteMutation.mutate(id)
+    setCart(data)
+    toast.success('Xóa sản phẩm thành công.')
+  }
 
   const deleteAll = () => {
-    const data = structuredClone(cart);
+    const data = structuredClone(cart)
 
     if (data.cart_products.length !== 0) {
       for (let i = 0; i < data.cart_products.length; i++) {
-        deleteMutation.mutate(data.cart_products[i].productId);
+        deleteMutation.mutate(data.cart_products[i].productId)
       }
 
-      setCart();
-      setTotalCost(0);
-      toast.success('Xóa sản phẩm thành công.');
+      setCart()
+      setTotalCost(0)
+      toast.success('Xóa sản phẩm thành công.')
     } else {
-      toast.error('Bạn không có sản phẩm để xóa.');
+      toast.error('Bạn không có sản phẩm để xóa.')
     }
-  };
+  }
 
   const updateQuantity = (
     productId: string,
     quantity: string | number,
-    oldQuantity: string | number
+    oldQuantity: string | number,
   ) => {
-    const data = structuredClone(cart);
+    const data = structuredClone(cart)
 
     for (let i = 0; i < data.cart_products.length; i++) {
       if (data.cart_products[i].productId == productId) {
-        data.cart_products[i].product_quantity = quantity;
-        break;
+        data.cart_products[i].product_quantity = quantity
+        break
       }
     }
-    setCart(data);
-    updateQuantityMutation.mutate({ productId, quantity, oldQuantity });
-  };
+    setCart(data)
+    updateQuantityMutation.mutate({ productId, quantity, oldQuantity })
+  }
 
   return (
     <div>
@@ -163,17 +158,17 @@ const Cart = () => {
                   if (cart && cart.cart_products) {
                     if (event.currentTarget.checked) {
                       while (productsChosen.current.length)
-                        productsChosen.current.pop();
-                      productsChosen.current.push(...cart.cart_products);
-                      setNumberChecked(cart.cart_products.length - 1);
+                        productsChosen.current.pop()
+                      productsChosen.current.push(...cart.cart_products)
+                      setNumberChecked(cart.cart_products.length - 1)
                     } else {
                       while (productsChosen.current.length)
-                        productsChosen.current.pop();
-                      setNumberChecked(-1);
+                        productsChosen.current.pop()
+                      setNumberChecked(-1)
                     }
                   }
-                  setTotalCost(0);
-                  setAllChecked(event.currentTarget.checked);
+                  setTotalCost(0)
+                  setAllChecked(event.currentTarget.checked)
                 }}
               />
             </Grid.Col>
@@ -239,11 +234,11 @@ const Cart = () => {
               className='bg-[#02B1AB]'
               onClick={() => {
                 if (productsChosen.current.length != 0) {
-                  const temp: any = productsChosen.current;
-                  setProducts(temp);
-                  router.push('/payment');
+                  const temp: any = productsChosen.current
+                  setProducts(temp)
+                  router.push('/payment')
                 } else {
-                  toast.error('Vui lòng chọn sản phẩm để thanh toán.');
+                  toast.error('Vui lòng chọn sản phẩm để thanh toán.')
                 }
               }}
             >
@@ -254,7 +249,7 @@ const Cart = () => {
       </Grid>
       <Toaster position='bottom-center' reverseOrder={false} />
     </div>
-  );
-};
+  )
+}
 
-export default Cart;
+export default Cart

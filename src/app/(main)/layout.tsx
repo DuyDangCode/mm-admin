@@ -5,7 +5,7 @@ import { constant } from '@/utils/constant'
 import { Button, Group } from '@mantine/core'
 import { DefaultEventsMap } from '@socket.io/component-emitter'
 import axios from 'axios'
-import { useContext, useEffect, useState } from 'react'
+import { Suspense, useContext, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { Socket, io } from 'socket.io-client'
 
@@ -30,7 +30,7 @@ let socket: Socket<DefaultEventsMap, DefaultEventsMap>
 // }
 
 export default function ManagerLayout({
-  children
+  children,
 }: {
   children: React.ReactNode
 }) {
@@ -52,9 +52,10 @@ export default function ManagerLayout({
       gap='0'
       wrap='nowrap'
     >
-      <SideBar from='manager' />
-      {children}
-      <Toaster position='top-center' reverseOrder={false} />
+        
+        <SideBar from='manager' />
+        {children}
+       
     </Group>
   )
 }

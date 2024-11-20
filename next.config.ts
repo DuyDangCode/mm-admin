@@ -9,8 +9,8 @@ const nextConfig: NextConfig = {
       'd3q01gc7kwv7n6.cloudfront.net',
       'iqvinc.com',
       'www.biiibo.com',
-      'khogachre.vn'
-    ]
+      'khogachre.vn',
+    ],
   },
   //htt
   async redirects() {
@@ -18,15 +18,15 @@ const nextConfig: NextConfig = {
       {
         source: '/',
         destination: '/dashboard/revenue',
-        permanent: true
+        permanent: true,
       },
       {
         source: '/manager/warehouse',
         destination: '/manager/warehouse/instock',
-        permanent: true
-      }
+        permanent: true,
+      },
     ]
-  }
+  },
 }
 
 export default nextConfig

@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import {
   Flex,
   Group,
@@ -8,68 +8,69 @@ import {
   Text,
   Stack,
   Divider,
-} from '@mantine/core';
+} from '@mantine/core'
 import {
+  Suspense,
   useContext,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
-} from 'react';
+} from 'react'
 import {
   chartData as DayChart,
   statsData as DayStats,
   getStatisDayData,
-} from './day-data';
+} from './day-data'
 import {
   chartData as WeekChart,
   statsData as WeekStats,
   segmentData as WeekSegment,
   getStatisWeekData,
-} from './week-data';
+} from './week-data'
 import {
   chartData as MonthChart,
   statsData as MonthStats,
   segmentData as MonthSegment,
   getStatisMonthData,
-} from './month-data';
+} from './month-data'
 import {
   chartData as QuarterChart,
   statsData as QuarterStats,
   segmentData as QuarterSegment,
   getStatisQuarterData,
-} from './quarter-data';
+} from './quarter-data'
 import {
   chartData as YearChart,
   statsData as YearStats,
   segmentData as YearSegment,
   getStatisYearData,
-} from './year-data';
-import ReportTable from '@/components/ReportTable/reportTable';
-import StatisticChart from '@/components/StatisticChart/statisticChart';
-import CalendarInput from '@/components/CalendarInput/calendarInput';
+} from './year-data'
+import ReportTable from '@/components/ReportTable/reportTable'
+import StatisticChart from '@/components/StatisticChart/statisticChart'
+import CalendarInput from '@/components/CalendarInput/calendarInput'
 import {
   startOfWeek,
   startOfQuarter,
   endOfWeek,
   endOfQuarter,
-} from '@/utils/date';
-import dynamic from 'next/dynamic';
-import StatsticCard from '@/components/StatisticChart/StatisticCard/statsticCard';
-import { useRouter } from 'next/navigation';
-import UserContext from '@/contexts/UserContext';
+} from '@/utils/date'
+import dynamic from 'next/dynamic'
+import StatsticCard from '@/components/StatisticChart/StatisticCard/statsticCard'
+import { useRouter } from 'next/navigation'
+import UserContext from '@/contexts/UserContext'
 import {
   DEFAULT_BARCHART,
   DEFAULT_STATS,
   calPer,
   getLabels,
-} from '@/utils/chart';
-import { ChartInterface, StatsInterface } from '@/utils/response';
-import useRangeTime from '@/hooks/useRangeTime';
-import { useQueries } from '@tanstack/react-query';
-import queryClient from '@/helpers/client';
-import StatisticsService from '@/services/statisticsService';
-import { getDaysInMonth } from '@/utils/chart';
+} from '@/utils/chart'
+import { ChartInterface, StatsInterface } from '@/utils/response'
+import useRangeTime from '@/hooks/useRangeTime'
+import { useQueries } from '@tanstack/react-query'
+import queryClient from '@/helpers/client'
+import StatisticsService from '@/services/statisticsService'
+import { getDaysInMonth } from '@/utils/chart'
 
 const tabData = [
   {
@@ -106,26 +107,26 @@ const tabData = [
     stats: YearStats,
     segment: YearSegment,
   },
-];
+]
 const STATS_INDEX = {
   day: 0,
   week: 1,
   month: 2,
   quarter: 3,
   year: 4,
-};
+}
 
 export default function RevenuePage() {
-  const router = useRouter();
-  const { user, setUser } = useContext(UserContext);
-  const [stats, setStats] = useState<StatsInterface[]>(DEFAULT_STATS);
-  const [chart, setChart] = useState<ChartInterface[]>(DEFAULT_BARCHART);
+  const router = useRouter()
+  const { user, setUser } = useContext(UserContext)
+  const [stats, setStats] = useState<StatsInterface[]>(DEFAULT_STATS)
+  const [chart, setChart] = useState<ChartInterface[]>(DEFAULT_BARCHART)
 
-  const [selectedDay, setSelectedDay] = useState<Date>(new Date());
-  const [week, setWeek]: any = useRangeTime('week', selectedDay);
-  const [quarter, setQuarter]: any = useRangeTime('quarter', selectedDay);
-  const [tabIndex, setTabIndex] = useState(0);
-  const [labels, setLabels] = useState(getLabels(selectedDay));
+  const [selectedDay, setSelectedDay] = useState<Date>(new Date())
+  const [week, setWeek]: any = useRangeTime('week', selectedDay)
+  const [quarter, setQuarter]: any = useRangeTime('quarter', selectedDay)
+  const [tabIndex, setTabIndex] = useState(0)
+  const [labels, setLabels] = useState(getLabels(selectedDay))
 
   // useQueries({
   //   queries: labels[0].map((label) => ({
@@ -142,58 +143,58 @@ export default function RevenuePage() {
     user: UserContext,
     selectedDay: Date,
     index: number,
-    setStatss: Function
+    setStatss: Function,
   ) => {
     fn(user, selectedDay).then((res: any) => {
       if (res && res.preData && res.selectedData) {
         // console.log('res', res);
         setStatss((prevData: StatsInterface[]) => {
-          prevData[index].selectTime = res.selectedData;
-          prevData[index].preTime = res.preData;
-          return [...prevData];
-        });
+          prevData[index].selectTime = res.selectedData
+          prevData[index].preTime = res.preData
+          return [...prevData]
+        })
       }
-    });
-  };
+    })
+  }
 
   useEffect(() => {
-    queryClient.refetchQueries({ queryKey: ['Data'], type: 'inactive' });
-  }, []);
+    queryClient.refetchQueries({ queryKey: ['Data'], type: 'inactive' })
+  }, [])
 
   useLayoutEffect(() => {
     if (user) {
-      getData(getStatisDayData, user, selectedDay, STATS_INDEX.day, setStats);
-      getData(getStatisWeekData, user, week[0], STATS_INDEX.week, setStats);
+      getData(getStatisDayData, user, selectedDay, STATS_INDEX.day, setStats)
+      getData(getStatisWeekData, user, week[0], STATS_INDEX.week, setStats)
       getData(
         getStatisMonthData,
         user,
         selectedDay,
         STATS_INDEX.month,
-        setStats
-      );
+        setStats,
+      )
       getData(
         getStatisQuarterData,
         user,
         quarter[0],
         STATS_INDEX.quarter,
-        setStats
-      );
-      getData(getStatisYearData, user, selectedDay, STATS_INDEX.year, setStats);
+        setStats,
+      )
+      getData(getStatisYearData, user, selectedDay, STATS_INDEX.year, setStats)
     }
-  }, [user, selectedDay, week, quarter, tabIndex]);
+  }, [user, selectedDay, week, quarter, tabIndex])
 
   useEffect(() => {
-    setLabels(getLabels(selectedDay));
-  }, [selectedDay]);
+    setLabels(getLabels(selectedDay))
+  }, [selectedDay])
 
   useEffect(() => {
-    setLabels(getLabels(quarter[0]));
-  }, [quarter]);
+    setLabels(getLabels(quarter[0]))
+  }, [quarter])
 
   useEffect(() => {
-    setWeek([selectedDay, selectedDay]);
-    setQuarter([selectedDay, selectedDay]);
-  }, [selectedDay]);
+    setWeek([selectedDay, selectedDay])
+    setQuarter([selectedDay, selectedDay])
+  }, [selectedDay])
 
   const choseStartDay = [
     selectedDay,
@@ -201,31 +202,31 @@ export default function RevenuePage() {
     new Date(`${selectedDay.getMonth() + 1}/1/${selectedDay.getFullYear()}`),
     quarter[0],
     new Date(`1/1/${selectedDay.getFullYear()}`),
-  ];
+  ]
 
   const choseEndDay = [
     selectedDay,
     week[1],
     new Date(
       `${selectedDay.getMonth() + 1}/${getDaysInMonth(
-        selectedDay.getMonth() + 1
-      )}/${selectedDay.getFullYear()}`
+        selectedDay.getMonth() + 1,
+      )}/${selectedDay.getFullYear()}`,
     ),
     quarter[1],
     new Date(`12/31/${selectedDay.getFullYear() + 1}`),
-  ];
+  ]
 
   const tabList = tabData.map((item, index) => (
     <Tabs.Tab
       key={item.value}
       value={item.value}
       onClick={() => {
-        setTabIndex(index);
+        setTabIndex(index)
       }}
     >
       {item.display}
     </Tabs.Tab>
-  ));
+  ))
 
   const tabPanels = tabData.map((i, index: number) => (
     <Tabs.Panel
@@ -255,11 +256,11 @@ export default function RevenuePage() {
                 zIndex === 0
                   ? calPer(
                       stats[index].selectTime.revenue,
-                      stats[index].preTime.revenue
+                      stats[index].preTime.revenue,
                     )
                   : calPer(
                       stats[index].selectTime.profit,
-                      stats[index].preTime.profit
+                      stats[index].preTime.profit,
                     )
               }
               desc={i.desc}
@@ -330,24 +331,26 @@ export default function RevenuePage() {
       <Divider my='sm' />
       {/* <ReportTable /> */}
     </Tabs.Panel>
-  ));
+  ))
 
   return (
     <ScrollArea className='h-full w-full z-[0]' py='1rem' px='2rem'>
-      <Tabs
-        variant='default'
-        orientation='vertical'
-        placement='right'
-        defaultValue={tabData.at(0)?.value}
-        activateTabWithKeyboard={false}
-      >
-        <div className='rounded-[8px] border-[0.5px] p-[12px] h-fit ml-[12px] sticky top-0'>
-          <Tabs.List>{tabList}</Tabs.List>
-        </div>
-        {tabPanels}
-      </Tabs>
+          
+        <Tabs
+          variant='default'
+          orientation='vertical'
+          placement='right'
+          defaultValue={tabData.at(0)?.value}
+          activateTabWithKeyboard={false}
+        >
+          <div className='rounded-[8px] border-[0.5px] p-[12px] h-fit ml-[12px] sticky top-0'>
+            <Tabs.List>{tabList}</Tabs.List>
+          </div>
+          {tabPanels}
+        </Tabs>
+          
     </ScrollArea>
-  );
+  )
 }
 
 // export default dynamic(() => Promise.resolve(RevenuePage), { ssr: false });

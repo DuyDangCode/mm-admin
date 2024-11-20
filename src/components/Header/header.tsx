@@ -19,7 +19,7 @@ import { usePathname } from 'next/navigation'
 // }
 
 export default function Header() {
-  const appName = 'Material Mastery'
+  const appName = 'Material Mastery Admin'
   const { user, setUser } = useContext(UserContext)
   const [link, setLink] = useState('/')
   const currentPath = usePathname()
