@@ -21,8 +21,13 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/manager/warehouse',
-        destination: '/manager/warehouse/instock',
+        source: '/dashboard',
+        destination: '/dashboard/revenue',
+        permanent: true,
+      },
+      {
+        source: '/warehouse',
+        destination: '/warehouse/instock',
         permanent: true,
       },
     ]

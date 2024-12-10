@@ -36,13 +36,13 @@ function Map({ allPositions, zoom }: LeafletMapProps) {
       iconSize: [30, 30],
     })
 
-    let marker = L.marker([allPositions[0].lng, allPositions[0].lat], {
+    let marker = L.marker(L.latLng(allPositions[0].lat, allPositions[0].lng), {
       icon: taxiIcon,
     }).addTo(map.current)
 
     allPositions.forEach((pos) => {
       console.log(pos)
-      L.marker([pos.lng, pos.lat]).addTo(map.current).addTo(map.current)
+      L.marker(L.latLng(pos.lat, pos.lng)).addTo(map.current)
     })
     // @ts-ignore
     L.Routing.control({
@@ -51,6 +51,7 @@ function Map({ allPositions, zoom }: LeafletMapProps) {
     })
       .on('routesfound', function (e: any) {
         var routes = e.routes
+        console.log('FOund route')
         e.routes[0].coordinates.forEach(function (coord: any, index: any) {
           setTimeout(function () {
             marker.setLatLng([coord.lat, coord.lng])

@@ -1,11 +1,9 @@
 'use client'
-import '@/styles/global.css'
 import NextImage from 'next/image'
 import { Flex, Group, Image, Text, Anchor, Menu, rem } from '@mantine/core'
 import logo from '@/public/icon.svg'
 import Search from '../Search/search'
 // import '../../app/global.css';
-import '@mantine/core/styles.css'
 import classes from './header.module.css'
 import Link from 'next/link'
 import { useContext, useEffect, useRef, useState } from 'react'

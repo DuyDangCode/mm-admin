@@ -9,11 +9,14 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Suspense, useContext, useEffect, useMemo, useState } from 'react'
 import DeliveryTable from './deliveryTable'
+import { Button, ScrollArea } from '@mantine/core'
+import { useRouter } from 'next/navigation'
 // import Map from '@/components/Map/Map'
 
 export default function DeliveryPage() {
   const [allPositions, setAllPositions] = useState<Pos[]>([{ lat: 0, lng: 0 }])
   const { user } = useContext(UserContext)
+  const router = useRouter()
 
   const deliveryQuery = useQuery({
     queryKey: ['deliveries'],
@@ -35,9 +38,20 @@ export default function DeliveryPage() {
     },
     enabled: !!user,
   })
+  useEffect(() => {
+    router.prefetch('/delivery/add-delivery')
+  }, [])
   return (
-    <div className='w-full h-full'>
-      <Link href={'/delivery/add-delivery'}>Add new delivery</Link>
+    <ScrollArea w='100%' h='100%' py='1rem' px='2rem'>
+      <Button
+        className='self-end'
+        onClick={() => {
+          router.push('/delivery/add-delivery')
+        }}
+      >
+        Tạo đơn vận chuyển
+      </Button>
+
       <DeliveryTable deliveries={deliveryQuery.data} />
 
       {/* <Map allPositions={allPositions} zoom={15} /> */}
@@ -52,6 +66,6 @@ export default function DeliveryPage() {
       {/* > */}
       {/*   <GeolocateControl position='top-left' /> */}
       {/* </Map> */}
-    </div>
+    </ScrollArea>
   )
 }

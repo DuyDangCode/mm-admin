@@ -36,7 +36,7 @@ export default function DeliveryDetailPage({
         // { lat: startLocation[0], lng: startLocation[1] },
         ...locations.routes.map((item: string) => {
           let pos = item.split(',')
-          return { lat: pos[0], lng: pos[1] }
+          return { lng: pos[0], lat: pos[1] }
         }),
       ]
     },
@@ -45,7 +45,9 @@ export default function DeliveryDetailPage({
 
   return (
     <div className='w-full h-full'>
-      {deliveryId}
+      <p className='px-3 py-2 text-[#02B1AB]'>
+        <b>Mã đơn:</b> {deliveryId}
+      </p>
       <div className='w-full h-full'>
         <Map allPositions={deliveryQuery.data} zoom={15} />
       </div>

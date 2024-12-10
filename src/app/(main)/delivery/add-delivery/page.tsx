@@ -30,6 +30,7 @@ import toast from 'react-hot-toast'
 import { createRequire } from 'module'
 import DeliveryService from '@/services/deliveryService'
 import { cwd } from 'process'
+import { useRouter } from 'next/navigation'
 
 const comboboxStyles: ComboboxProps = {
   transitionProps: { transition: 'pop', duration: 200 },
@@ -41,6 +42,7 @@ export default function OnlineOrderSegment() {
 
   const { user } = useContext(UserContext)
   const [selectedOrders, setSelectedOrders] = useState<any>([])
+  const router = useRouter()
 
   const orders = useQuery({
     queryKey: ['orders delivery', activePage],
@@ -82,24 +84,26 @@ export default function OnlineOrderSegment() {
     }
     console.log(selectedOrders.map((item: any) => item.id))
     const deliveryService = new DeliveryService(user)
-    toast.promise(
-      deliveryService.createDelivery(
+    const createDeliveryPromise = deliveryService
+      .createDelivery(
         selectedOrders.map((item: any) => item.id),
         startLocation,
-      ),
-      {
-        loading: '',
-        error: '',
-        success: 'Tạo chuyến giao hàng thành công',
-      },
-    )
+      )
+      .then((res) => {
+        router.push('/delivery')
+      })
+    toast.promise(createDeliveryPromise, {
+      loading: '',
+      error: '',
+      success: 'Tạo chuyến giao hàng thành công',
+    })
   }
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log('Vị trí hiện tại:', position.coords)
         setStartLocation(
-          `${position.coords.latitude},${position.coords.longitude}`,
+          `${position.coords.longitude},${position.coords.latitude}`,
         )
       },
       (error) => {
