@@ -23,10 +23,20 @@ const Providers = ({ children }: { children: ReactNode }) => {
 
   useDeepCompareEffect(() => {
     if (!isUserSet) return
-    if (!user?.userId && pathname !== '/sign-in') {
+    if (
+      !user?.userId &&
+      pathname !== '/sign-in' &&
+      pathname !== '/sign-in/forgot-password'
+    ) {
+      console.log(pathname)
       redirect('/sign-in')
     }
-    if (user?.userId && (pathname === '/sign-in' || pathname === '/sign-up')) {
+    if (
+      user?.userId &&
+      (pathname === '/sign-in' ||
+        pathname === '/sign-up' ||
+        pathname === '/sign-in/forgot-password')
+    ) {
       redirect('/')
     }
   }, [pathname, searchParams, user, isUserSet])

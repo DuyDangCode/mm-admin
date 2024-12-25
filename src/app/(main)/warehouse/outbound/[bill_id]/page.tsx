@@ -97,7 +97,9 @@ export default function ExportBillView({
           </Group>
           <Group justify='space-between' wrap='nowrap' gap='0'>
             <BillInfoField label='Hình thức thanh toán'>
-              {bill.data?.bill_info.bill_payment.method}
+              {bill.data?.bill_info.bill_payment.method == 'upon receipt'
+                ? 'khi nhận hàng'
+                : 'online'}
             </BillInfoField>
             <BillInfoField label='Địa chỉ kho đi'>
               {bill.data?.bill_info.bill_address.from}

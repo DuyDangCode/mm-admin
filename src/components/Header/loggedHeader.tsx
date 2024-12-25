@@ -45,7 +45,7 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
 
   const onClickFunction: OnClickInterface = {
     details: () => {
-      router.push('/account/details')
+      router.push('/account')
     },
     signOut: () => {
       userService.signOut(user)

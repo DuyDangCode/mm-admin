@@ -11,6 +11,7 @@ import { Suspense, useContext, useEffect, useMemo, useState } from 'react'
 import DeliveryTable from './deliveryTable'
 import { Button, ScrollArea } from '@mantine/core'
 import { useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
 // import Map from '@/components/Map/Map'
 
 export default function DeliveryPage() {
@@ -32,7 +33,7 @@ export default function DeliveryPage() {
           startLocation: item.startLocation,
           id: item._id,
           updateAt: item.updatedAt,
-          createAt: item.createdAt,
+          createAt: dayjs(item.createdAt).format('DD/MM/YYYY'),
         }),
       )
     },

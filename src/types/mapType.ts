@@ -6,3 +6,8 @@ export type LeafletMapProps = {
   allPositions: Pos[] | undefined
   zoom: number
 }
+
+export type DeliveryDetailData = {
+  createAt: string
+  pos: Pos[]
+}

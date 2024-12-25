@@ -1,5 +1,5 @@
-'use client';
-import '@/styles/global.css';
+'use client'
+import '@/styles/global.css'
 import {
   Button,
   Stack,
@@ -7,22 +7,23 @@ import {
   PasswordInput,
   LoadingOverlay,
   Alert,
-} from '@mantine/core';
-import '@mantine/core/styles.css';
+} from '@mantine/core'
+import '@mantine/core/styles.css'
 
-import { IconInfoCircle } from '@tabler/icons-react';
-import { useForm } from '@mantine/form';
-import { checkNameFormat, checkPasswordFormat } from '@/utils/regex';
-import { userService } from '@/services/userService';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useContext } from 'react';
-import UserContext from '@/contexts/UserContext';
+import { IconInfoCircle } from '@tabler/icons-react'
+import { useForm } from '@mantine/form'
+import { checkNameFormat, checkPasswordFormat } from '@/utils/regex'
+import { userService } from '@/services/userService'
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { useContext } from 'react'
+import UserContext from '@/contexts/UserContext'
+import Link from 'next/link'
 
 export function SignInForm() {
-  const router = useRouter();
+  const router = useRouter()
   // const [user, setUser] = useLogin();
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext)
   const form = useForm({
     initialValues: {
       userInfo: '',
@@ -32,7 +33,7 @@ export function SignInForm() {
       userInfo: (value) => checkNameFormat(value),
       password: (value) => checkPasswordFormat(value),
     },
-  });
+  })
 
   const loginMutation = useMutation({
     mutationKey: ['loginMutation'],
@@ -40,19 +41,19 @@ export function SignInForm() {
 
     onSuccess: (res) => {
       try {
-        setUser(res);
-        router.push('/');
+        setUser(res)
+        router.push('/')
       } catch {}
     },
 
     onError(error) {
-      console.log(error);
+      console.log(error)
     },
-  });
+  })
 
   const handleSubmit = (formData: any) => {
-    loginMutation.mutate(formData);
-  };
+    loginMutation.mutate(formData)
+  }
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -76,6 +77,7 @@ export function SignInForm() {
           size='md'
         />
       </Stack>
+      <Link href={'/sign-in/forgot-password'}>Quên mật khẩu</Link>
       <Button
         id='signin-form-btn'
         fullWidth
@@ -105,5 +107,5 @@ export function SignInForm() {
         </Alert>
       )}
     </form>
-  );
+  )
 }

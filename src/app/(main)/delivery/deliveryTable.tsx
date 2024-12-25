@@ -35,8 +35,7 @@ export default function DeliveryTable({ deliveries }: Props) {
 
   const tableBody = deliveries?.map((i) => (
     <Table.Tr key={i.id}>
-      {/* <Table.Td>{formatOrderId(i.id, i.createAt)}</Table.Td> */}
-      <Table.Td>{i.id}</Table.Td>
+      <Table.Td>{formatOrderId(i.id, i.createAt)}</Table.Td>
       <Table.Td>{i.createAt}</Table.Td>
       <Table.Td>{mapStatus(i.status, statusMap)}</Table.Td>
       <Table.Td
