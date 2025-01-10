@@ -263,6 +263,32 @@ class OrderService {
         console.log('Err::confirmOrderByCustomer:: ', err)
       })
   }
+  getAllNearestOrdersByIds = (
+    orderIds: string[],
+    radius: number | string,
+    page = 1,
+    limit = 5,
+  ) => {
+    // /nearby/657c0f7e27eb198b5ab7e1e1?radius=2
+    let orderIdsString = orderIds.reduce(
+      (result: string, item: string) => `${result}&orderIds[]=${item}`,
+      '',
+    )
+    return axios
+      .get(
+        `${constant.BASE_URL}/order/nearby?radius=${radius}&${orderIdsString}&limit=${limit}&page=${page}`,
+        {
+          headers: this.hearders,
+        },
+      )
+      .then((res) => {
+        return res.data.metadata
+      })
+      .catch((err: any) => {
+        console.log('err', err)
+        throw err
+      })
+  }
 }
 
 export default OrderService

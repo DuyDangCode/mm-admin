@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Suspense, useContext, useEffect, useMemo, useState } from 'react'
 import DeliveryTable from './deliveryTable'
-import { Button, ScrollArea } from '@mantine/core'
+import { Button, Loader, ScrollArea, Skeleton } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
 // import Map from '@/components/Map/Map'
@@ -42,6 +42,12 @@ export default function DeliveryPage() {
   useEffect(() => {
     router.prefetch('/delivery/add-delivery')
   }, [])
+  if (deliveryQuery.isPending)
+    return (
+      <div className='w-full h-[500px] flex justify-center items-center'>
+        <Loader type='dots' />
+      </div>
+    )
   return (
     <ScrollArea w='100%' h='100%' py='1rem' px='2rem'>
       <Button
@@ -54,19 +60,6 @@ export default function DeliveryPage() {
       </Button>
 
       <DeliveryTable deliveries={deliveryQuery.data} />
-
-      {/* <Map allPositions={allPositions} zoom={15} /> */}
-      {/* <Map */}
-      {/*   initialViewState={{ */}
-      {/*     longitude: -100, */}
-      {/*     latitude: 40, */}
-      {/*     zoom: 3.5, */}
-      {/*   }} */}
-      {/*   style={{ width: 800, height: 600 }} */}
-      {/*   mapStyle='https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json' */}
-      {/* > */}
-      {/*   <GeolocateControl position='top-left' /> */}
-      {/* </Map> */}
     </ScrollArea>
   )
 }

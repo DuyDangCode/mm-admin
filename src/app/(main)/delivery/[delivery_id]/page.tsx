@@ -10,6 +10,7 @@ import { DeliveryDetailData, Pos } from '@/types/mapType'
 import dynamic from 'next/dynamic'
 import { formatOrderId } from '@/utils/string'
 import dayjs from 'dayjs'
+import BackButton from '@/components/BackButton/backButton'
 
 export default function DeliveryDetailPage({
   params,
@@ -54,13 +55,17 @@ export default function DeliveryDetailPage({
 
   return (
     <div className='w-full h-full'>
-      <p className='px-3 py-2 text-[#02B1AB]'>
-        <b>Mã đơn:</b>{' '}
-        {formatOrderId(
-          deliveryId,
-          deliveryQuery.data?.createAt ?? Date.now().toString(),
-        )}
-      </p>
+      <div className='flex flex-row gap-2 items-center pl-2'>
+        <BackButton />
+        <p className='px-3 py-2 text-[#02B1AB]'>
+          <b>Mã đơn:</b>{' '}
+          {formatOrderId(
+            deliveryId,
+            deliveryQuery.data?.createAt ?? Date.now().toString(),
+          )}
+        </p>
+      </div>
+
       <div className='w-full h-full'>
         <Map allPositions={deliveryQuery.data?.pos} zoom={15} />
       </div>

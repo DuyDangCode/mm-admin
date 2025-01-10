@@ -28,11 +28,16 @@ class DeliveryService {
   }
 
   getAllDelivery() {
-    return axios.get(this.url, { headers: this.hearders })
+    return axios.get(`${this.url}?sorted[]=createdAt`, {
+      headers: this.hearders,
+    })
   }
 
   getDelivery(id: string) {
     return axios.get(`${this.url}/${id}`, { headers: this.hearders })
+  }
+  deleteDelivery(id: string) {
+    return axios.delete(`${this.url}/${id}`, { headers: this.hearders })
   }
 }
 
