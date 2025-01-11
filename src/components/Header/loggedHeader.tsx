@@ -36,11 +36,20 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
   const router = useRouter()
   const notifications = useQuery({
     queryKey: ['manager_notifications'],
-    queryFn: () => {
+    queryFn: async () => {
       const notificationsService = new NotificationService(user)
-      return notificationsService.getNotification()
+      try {
+        const notifications = await notificationsService.getNotification()
+        return notifications
+      } catch (error: any) {
+        if (error?.status == 400) {
+          handleOnClickOnMenu('signOut')
+        }
+        return []
+      }
     },
     enabled: !!user,
+    staleTime: 0,
   })
 
   const onClickFunction: OnClickInterface = {

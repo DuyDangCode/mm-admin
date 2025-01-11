@@ -335,20 +335,18 @@ export default function RevenuePage() {
 
   return (
     <ScrollArea className='h-full w-full z-[0]' py='1rem' px='2rem'>
-          
-        <Tabs
-          variant='default'
-          orientation='vertical'
-          placement='right'
-          defaultValue={tabData.at(0)?.value}
-          activateTabWithKeyboard={false}
-        >
-          <div className='rounded-[8px] border-[0.5px] p-[12px] h-fit ml-[12px] sticky top-0'>
-            <Tabs.List>{tabList}</Tabs.List>
-          </div>
-          {tabPanels}
-        </Tabs>
-          
+      <Tabs
+        variant='default'
+        orientation='vertical'
+        placement='right'
+        defaultValue={tabData.at(0)?.value}
+        activateTabWithKeyboard={false}
+      >
+        <div className='rounded-[8px] border-[0.5px] p-[12px] h-fit ml-[12px] sticky top-0'>
+          <Tabs.List>{tabList}</Tabs.List>
+        </div>
+        {tabPanels}
+      </Tabs>
     </ScrollArea>
   )
 }

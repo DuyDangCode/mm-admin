@@ -21,6 +21,7 @@ import toast from 'react-hot-toast'
 import DeliveryService from '@/services/deliveryService'
 import { useRouter } from 'next/navigation'
 import BackButton from '@/components/BackButton/backButton'
+import { constant } from '@/utils/constant'
 
 const comboboxStyles: ComboboxProps = {
   transitionProps: { transition: 'pop', duration: 200 },
@@ -28,7 +29,10 @@ const comboboxStyles: ComboboxProps = {
 }
 export default function OnlineOrderSegment() {
   const [activePage, setPage] = useState(1)
-  const [startLocation, setStartLocation] = useState<string | null>(null)
+  const [startLocation, setStartLocation] = useState<string | null>(
+    constant.START_LOCATION,
+  )
+
   const { user } = useContext(UserContext)
   const [selectedOrders, setSelectedOrders] = useState<any>([])
   const router = useRouter()
@@ -103,19 +107,19 @@ export default function OnlineOrderSegment() {
       success: 'Tạo chuyến giao hàng thành công',
     })
   }
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log('Vị trí hiện tại:', position.coords)
-        setStartLocation(
-          `${position.coords.longitude},${position.coords.latitude}`,
-        )
-      },
-      (error) => {
-        console.error('Lỗi khi lấy vị trí:', error)
-      },
-    )
-  }, [])
+  // useEffect(() => {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       console.log('Vị trí hiện tại:', position.coords)
+  //       setStartLocation(
+  //         `${position.coords.longitude},${position.coords.latitude}`,
+  //       )
+  //     },
+  //     (error) => {
+  //       console.error('Lỗi khi lấy vị trí:', error)
+  //     },
+  //   )
+  // }, [])
   if (
     orders.isPending ||
     numberOfOrder.isPending ||

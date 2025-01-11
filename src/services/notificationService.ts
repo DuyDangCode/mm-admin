@@ -23,10 +23,9 @@ class NotificationService {
       })
       .then((res) => res.data.metadata[0].noti_options)
       .catch((error) => {
-        throw new Error()
+        throw error
       })
   }
 }
 
 export default NotificationService
-

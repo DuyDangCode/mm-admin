@@ -1,6 +1,6 @@
-import queryClient from "@/helpers/client";
-import StatisticsService from "@/services/statisticsService";
-import { DEFAULT_RES_STATISTICS } from "@/utils/chart";
+import queryClient from '@/helpers/client'
+import StatisticsService from '@/services/statisticsService'
+import { DEFAULT_RES_STATISTICS } from '@/utils/chart'
 
 const labels = [
   'Thứ 2',
@@ -10,43 +10,41 @@ const labels = [
   'Thứ 6',
   'Thứ 7',
   'Chủ nhật',
-];
+]
 
-export const getStatisYearData = async(user: any, day: Date = new Date()) => {
-    const selectedDay = `1/1/${day.getFullYear()}`;
-    const preDay = `1/1/${day.getFullYear()-1}`;
-    const preData = await getData(user, preDay);
-    const selectedData = await getData(user, selectedDay);
-    return selectedData && preData ? {selectedData, preData} : DEFAULT_RES_STATISTICS;    
+export const getStatisYearData = async (user: any, day: Date = new Date()) => {
+  const selectedDay = `1/1/${day.getFullYear()}`
+  const preDay = `1/1/${day.getFullYear() - 1}`
+  const preData = await getData(user, preDay)
+  const selectedData = await getData(user, selectedDay)
+  return selectedData && preData
+    ? { selectedData, preData }
+    : DEFAULT_RES_STATISTICS
 }
 
-const getData = async(user: any, selectedDay: Date | string) => {
-    let date: string = '1/1/2024';
-    let year: any = 2024;
+const getData = async (user: any, selectedDay: Date | string) => {
+  let date: string = '1/1/2024'
+  let year: any = 2024
 
-    if(typeof selectedDay === 'string'){
-        date =  selectedDay; 
-        year = selectedDay.split('/')[2];
-    }else{
-        date = selectedDay?.toLocaleDateString('en-GB');
-        year = selectedDay.getFullYear(); 
-    }
-    return await queryClient.ensureQueryData({
+  if (typeof selectedDay === 'string') {
+    date = selectedDay
+    year = selectedDay.split('/')[2]
+  } else {
+    date = selectedDay?.toLocaleDateString('en-GB')
+    year = selectedDay.getFullYear()
+  }
+  return await queryClient.ensureQueryData({
     queryKey: ['yearStatsData', date],
     queryFn: () => {
-      const statisticsService = new StatisticsService(user);
-      return statisticsService.getRevenueAndProfit(
-        date,
-        `31/12/${year}`
-      );
-        },
+      const statisticsService = new StatisticsService(user)
+      return statisticsService.getRevenueAndProfit(date, `31/12/${year}`)
+    },
     initialData: {
-        "revenue": 0,
-        "profit": 0
-    }
-    })
+      revenue: 0,
+      profit: 0,
+    },
+  })
 }
-
 
 export const chartData = {
   pie: {
@@ -73,7 +71,7 @@ export const chartData = {
       },
     ],
   },
-};
+}
 export const statsData = [
   {
     label: 'Doanh thu',
@@ -87,9 +85,9 @@ export const statsData = [
     per: 28,
     desc: 'Compare with previous year',
   },
-];
+]
 
 export const segmentData = [
   { value: 'general', label: 'Tổng' },
   { value: 'per', label: 'Theo tháng' },
-];
+]
