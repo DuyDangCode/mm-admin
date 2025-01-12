@@ -51,40 +51,38 @@ export default function InboundPage() {
   }
   return (
     <ScrollArea w='100%' h='100%' py='1rem' px='2rem'>
-        
-        <Group justify='space-between' mb='md'>
-          <Title order={4}>Danh sách phiếu nhập kho</Title>
-          <Button
-            // className='bg-0-primary-color-6 text-white'
-            bg={'#02B1AB'}
-            className=' text-white'
-            onClick={() => {
-              router.push(`${currentPath}/create_import_bill`)
+      <Group justify='space-between' mb='md'>
+        <Title order={4}>Danh sách phiếu nhập kho</Title>
+        <Button
+          // className='bg-0-primary-color-6 text-white'
+          bg={'#02B1AB'}
+          className=' text-white'
+          onClick={() => {
+            router.push(`${currentPath}/create_import_bill`)
+          }}
+        >
+          Tạo phiếu
+        </Button>
+      </Group>
+      {bills.isPending ? (
+        <div className='w-full h-[500px] flex justify-center items-center'>
+          <Loader type='dots' />
+        </div>
+      ) : (
+        <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
+          <ImportBillTable bills={bills.data} />
+          <Pagination
+            classNames={{
+              control: 'pagination-control',
             }}
-          >
-            Tạo phiếu
-          </Button>
-        </Group>
-        {bills.isPending ? (
-          <div className='w-full h-[500px] flex justify-center items-center'>
-            <Loader type='dots' />
-          </div>
-        ) : (
-          <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
-            <ImportBillTable bills={bills.data} />
-            <Pagination
-              classNames={{
-                control: 'pagination-control',
-              }}
-              className='self-center'
-              total={calPages(numberOfBill.data?.export)}
-              value={activePage}
-              onChange={setPage}
-              mt='sm'
-            />
-          </div>
-        )}
-       
+            className='self-center'
+            total={calPages(numberOfBill.data?.export)}
+            value={activePage}
+            onChange={setPage}
+            mt='sm'
+          />
+        </div>
+      )}
     </ScrollArea>
   )
 }

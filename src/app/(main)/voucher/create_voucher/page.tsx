@@ -28,8 +28,8 @@ import { DateTimePicker } from '@mantine/dates'
 import VoucherService from '@/services/voucherService'
 import UserContext from '@/contexts/UserContext'
 import dayjs from 'dayjs'
-import Loading from './loading'
 import { useRouter } from 'next/navigation'
+import DotLoading from '@/components/Loading/DotLoading'
 
 const CreateVoucher = () => {
   const router = useRouter()
@@ -151,159 +151,157 @@ const CreateVoucher = () => {
 
   return (
     <ScrollArea className='h-full w-full z-[0]'>
-          
-        <div className='flex flex-col gap-[24px] py-[16px] px-[16px] h-full w-full '>
-          <ActionIcon
-            variant='light'
-            size='lg'
-            aria-label='Back to Order page'
-            onClick={() => router.back()}
+      <div className='flex flex-col gap-[24px] py-[16px] px-[16px] h-full w-full '>
+        <ActionIcon
+          variant='light'
+          size='lg'
+          aria-label='Back to Order page'
+          onClick={() => router.back()}
+        >
+          <IconArrowLeft />
+        </ActionIcon>
+        {createVoucherMutation.isPending ? (
+          <DotLoading />
+        ) : (
+          <form
+            onSubmit={form.onSubmit(handleCreateVoucher)}
+            id='newVoucherForm'
           >
-            <IconArrowLeft />
-          </ActionIcon>
-          {createVoucherMutation.isPending ? (
-            <Loading />
-          ) : (
-            <form
-              onSubmit={form.onSubmit(handleCreateVoucher)}
-              id='newVoucherForm'
-            >
-              <Flex direction='column-reverse'>
-                <Flex className='rounded-[8px] border-[1px] ' p='16' gap={10}>
-                  <Stack w='250' className='basis-1/3'>
-                    <TextInput
-                      label='Tên voucher'
-                      placeholder='VD: Voucher của Khải'
-                      withAsterisk
-                      {...form.getInputProps('name')}
-                    />
-                    <Textarea
-                      label='Mô tả'
-                      placeholder='VD: Gì dó'
-                      withAsterisk
-                      autosize
-                      {...form.getInputProps('description')}
-                    />
-                    <TextInput
-                      label='Code'
-                      placeholder='VD: CODE 1'
-                      withAsterisk
-                      {...form.getInputProps('code')}
-                    />
+            <Flex direction='column-reverse'>
+              <Flex className='rounded-[8px] border-[1px] ' p='16' gap={10}>
+                <Stack w='250' className='basis-1/3'>
+                  <TextInput
+                    label='Tên voucher'
+                    placeholder='VD: Voucher của Khải'
+                    withAsterisk
+                    {...form.getInputProps('name')}
+                  />
+                  <Textarea
+                    label='Mô tả'
+                    placeholder='VD: Gì dó'
+                    withAsterisk
+                    autosize
+                    {...form.getInputProps('description')}
+                  />
+                  <TextInput
+                    label='Code'
+                    placeholder='VD: CODE 1'
+                    withAsterisk
+                    {...form.getInputProps('code')}
+                  />
 
-                    <Select
-                      label='Hình thức'
-                      value={type}
-                      onChange={setType}
-                      data={['Giảm theo %', 'Giảm số tiền nhất định']}
-                      withAsterisk
-                    />
+                  <Select
+                    label='Hình thức'
+                    value={type}
+                    onChange={setType}
+                    data={['Giảm theo %', 'Giảm số tiền nhất định']}
+                    withAsterisk
+                  />
 
-                    <Select
-                      label='Áp dụng cho'
-                      value={apply}
-                      onChange={(value) => {
-                        setAddedProduct([])
-                        setApply(value)
-                      }}
-                      data={['Những sản phẩm nhất định', 'Toàn bộ sản phẩm']}
-                      withAsterisk
-                    />
-                  </Stack>
-                  <Stack w='250' className='basis-1/3'>
+                  <Select
+                    label='Áp dụng cho'
+                    value={apply}
+                    onChange={(value) => {
+                      setAddedProduct([])
+                      setApply(value)
+                    }}
+                    data={['Những sản phẩm nhất định', 'Toàn bộ sản phẩm']}
+                    withAsterisk
+                  />
+                </Stack>
+                <Stack w='250' className='basis-1/3'>
+                  <NumberInput
+                    label='Số lần sử dụng tối đa'
+                    withAsterisk
+                    {...form.getInputProps('max_uses')}
+                  />
+                  <NumberInput
+                    label='Số lần sử dụng tối đa của mỗi user'
+                    withAsterisk
+                    {...form.getInputProps('max_uses_per_user')}
+                  />
+                  <NumberInput
+                    label='Giá trị đơn hàng tối thiểu'
+                    withAsterisk
+                    {...form.getInputProps('min_order_value')}
+                  />
+                  <DateTimePicker
+                    label='Ngày kết thúc'
+                    withAsterisk
+                    {...form.getInputProps('end_date')}
+                  />
+                  {type == 'Giảm theo %' && (
                     <NumberInput
-                      label='Số lần sử dụng tối đa'
+                      label='Số % giảm theo giá tiền'
                       withAsterisk
-                      {...form.getInputProps('max_uses')}
+                      min={1}
+                      max={100}
+                      {...form.getInputProps('value')}
                     />
+                  )}
+                  {type == 'Giảm số tiền nhất định' && (
                     <NumberInput
-                      label='Số lần sử dụng tối đa của mỗi user'
+                      label='Số tiền được giảm'
                       withAsterisk
-                      {...form.getInputProps('max_uses_per_user')}
+                      {...form.getInputProps('value')}
                     />
-                    <NumberInput
-                      label='Giá trị đơn hàng tối thiểu'
-                      withAsterisk
-                      {...form.getInputProps('min_order_value')}
-                    />
-                    <DateTimePicker
-                      label='Ngày kết thúc'
-                      withAsterisk
-                      {...form.getInputProps('end_date')}
-                    />
-                    {type == 'Giảm theo %' && (
-                      <NumberInput
-                        label='Số % giảm theo giá tiền'
-                        withAsterisk
-                        min={1}
-                        max={100}
-                        {...form.getInputProps('value')}
-                      />
-                    )}
-                    {type == 'Giảm số tiền nhất định' && (
-                      <NumberInput
-                        label='Số tiền được giảm'
-                        withAsterisk
-                        {...form.getInputProps('value')}
-                      />
-                    )}
-                  </Stack>
-                  <ScrollArea className='h-[450px] w-full'>
-                    <Stack className='basis-2/3' p='16' align='center'>
-                      {addedProduct.map((item) => (
-                        <Stack align='center'>
-                          <Image
-                            alt='product'
-                            w={200}
-                            width={200}
-                            height={200}
-                            src={item.product_thumb}
-                            component={NImage}
-                            className=' border-b-[1px] border-gray-300 '
-                          />
-                          <Text>{item.product_name}</Text>
-                        </Stack>
-                      ))}
-                      {apply == 'Những sản phẩm nhất định' && (
-                        <ProductPicker
-                          categories={categories.data}
-                          label='Thêm sản phẩm'
-                          onChoose={handleChooseProduct}
+                  )}
+                </Stack>
+                <ScrollArea className='h-[450px] w-full'>
+                  <Stack className='basis-2/3' p='16' align='center'>
+                    {addedProduct.map((item) => (
+                      <Stack align='center'>
+                        <Image
+                          alt='product'
+                          w={200}
+                          width={200}
+                          height={200}
+                          src={item.product_thumb}
+                          component={NImage}
+                          className=' border-b-[1px] border-gray-300 '
                         />
-                      )}
-                    </Stack>
-                  </ScrollArea>
-                </Flex>
-                <Group justify='space-between'>
-                  <Stack gap='0' px='32px'>
-                    <Title order={2} mb='4'>
-                      Tạo voucher
-                    </Title>
+                        <Text>{item.product_name}</Text>
+                      </Stack>
+                    ))}
+                    {apply == 'Những sản phẩm nhất định' && (
+                      <ProductPicker
+                        categories={categories.data}
+                        label='Thêm sản phẩm'
+                        onChoose={handleChooseProduct}
+                      />
+                    )}
                   </Stack>
-                  <Button.Group>
-                    <Button
-                      variant='outline'
-                      onClick={() => {
-                        form.reset()
-                        setAddedProduct([])
-                      }}
-                    >
-                      Làm mới
-                    </Button>
-                    <Button
-                      className='bg-0-primary-color-6 text-white'
-                      form='newVoucherForm'
-                      type='submit'
-                    >
-                      Tạo voucher
-                    </Button>
-                  </Button.Group>
-                </Group>
+                </ScrollArea>
               </Flex>
-            </form>
-          )}
-        </div>
-          
+              <Group justify='space-between'>
+                <Stack gap='0' px='32px'>
+                  <Title order={2} mb='4'>
+                    Tạo voucher
+                  </Title>
+                </Stack>
+                <Button.Group>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      form.reset()
+                      setAddedProduct([])
+                    }}
+                  >
+                    Làm mới
+                  </Button>
+                  <Button
+                    className='bg-0-primary-color-6 text-white'
+                    form='newVoucherForm'
+                    type='submit'
+                  >
+                    Tạo voucher
+                  </Button>
+                </Button.Group>
+              </Group>
+            </Flex>
+          </form>
+        )}
+      </div>
     </ScrollArea>
   )
 }

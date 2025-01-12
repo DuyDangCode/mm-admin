@@ -1,18 +1,18 @@
-'use client';
-import { useContext, useState } from 'react';
-import { IconUser, IconChecklist } from '@tabler/icons-react';
-import { Box, NavLink, Stack } from '@mantine/core';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import UserContext from '@/contexts/UserContext';
+'use client'
+import { useContext, useState } from 'react'
+import { IconUser, IconChecklist } from '@tabler/icons-react'
+import { Box, NavLink, Stack } from '@mantine/core'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import UserContext from '@/contexts/UserContext'
 
 // interface HandleRouterInterface {
 //   [id: number]: Function;
 // }
 
 const AccountNav = ({ namePage }: { namePage: string }) => {
-  const { user } = useContext(UserContext);
-  const [active, setActive] = useState(namePage);
+  const { user } = useContext(UserContext)
+  const [active, setActive] = useState(namePage)
 
   return (
     <Stack
@@ -52,7 +52,7 @@ const AccountNav = ({ namePage }: { namePage: string }) => {
         />
       )}
     </Stack>
-  );
-};
+  )
+}
 
-export default AccountNav;
+export default AccountNav

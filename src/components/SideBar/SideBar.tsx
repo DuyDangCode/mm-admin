@@ -9,7 +9,7 @@ import {
   IconUsersGroup,
   IconCategory,
   IconTicket,
-  IconTruckDelivery
+  IconTruckDelivery,
 } from '@tabler/icons-react'
 
 const staffData = [
@@ -20,13 +20,13 @@ const staffData = [
     child: [
       {
         slug: 'revenue',
-        label: 'Doanh thu'
-      }
+        label: 'Doanh thu',
+      },
       // {
       //     slug: 'in-outbound',
       //     label: 'Nhập/Xuất kho',
       // },
-    ]
+    ],
   },
   {
     slug: 'warehouse',
@@ -35,32 +35,32 @@ const staffData = [
     child: [
       {
         slug: 'instock',
-        label: 'Tồn kho'
+        label: 'Tồn kho',
       },
       {
         slug: 'outbound',
-        label: 'Xuất kho'
-      }
-    ]
+        label: 'Xuất kho',
+      },
+    ],
   },
   {
     slug: 'order',
     icon: IconChecklist,
     label: 'Đơn hàng',
-    child: []
+    child: [],
   },
   {
     slug: 'category',
     icon: IconCategory,
     label: 'Danh mục',
-    child: []
+    child: [],
   },
   {
     slug: 'voucher',
     icon: IconTicket,
     label: 'Voucher',
-    child: []
-  }
+    child: [],
+  },
 ]
 const managerData = [
   {
@@ -70,13 +70,13 @@ const managerData = [
     child: [
       {
         slug: 'revenue',
-        label: 'Doanh thu'
-      }
+        label: 'Doanh thu',
+      },
       // {
       //     slug: 'in-outbound',
       //     label: 'Nhập/Xuất kho',
       // },
-    ]
+    ],
   },
   {
     slug: 'warehouse',
@@ -85,58 +85,58 @@ const managerData = [
     child: [
       {
         slug: 'instock',
-        label: 'Tồn kho'
+        label: 'Tồn kho',
       },
       {
         slug: 'inbound',
-        label: 'Nhập kho'
+        label: 'Nhập kho',
       },
       {
         slug: 'outbound',
-        label: 'Xuất kho'
-      }
-    ]
+        label: 'Xuất kho',
+      },
+    ],
   },
   {
     slug: 'order',
     icon: IconChecklist,
     label: 'Đơn hàng',
-    child: []
+    child: [],
   },
   {
     slug: 'staff',
     icon: IconUsersGroup,
     label: 'Nhân viên',
-    child: []
+    child: [],
   },
   {
     slug: 'category',
     icon: IconCategory,
     label: 'Danh mục',
-    child: []
+    child: [],
   },
   {
     slug: 'voucher',
     icon: IconTicket,
     label: 'Voucher',
-    child: []
+    child: [],
   },
   {
     slug: 'delivery',
     icon: IconTruckDelivery,
     label: 'Vận chuyển',
-    child: []
-  }
+    child: [],
+  },
 ]
 const defaultSearchParams = {
   warehouse: {
     key: 'tab',
-    param: 'publish'
+    param: 'publish',
   },
   instock: {
     key: 'tab',
-    param: 'publish'
-  }
+    param: 'publish',
+  },
 }
 export default function SideBar({ from }: { from: string }) {
   const router = useRouter()
@@ -147,11 +147,22 @@ export default function SideBar({ from }: { from: string }) {
     setActive(currentUrl.split('/').filter(Boolean))
   }, [currentUrl])
 
+  useEffect(() => {
+    router.prefetch('/warehouse/instock?tab=publish')
+    router.prefetch('/staff')
+    router.prefetch('/order')
+    router.prefetch('/category')
+    router.prefetch('/voucher')
+    router.prefetch('/delivery')
+    router.prefetch('/warehouse/inbound')
+    router.prefetch('/warehouse/outbound')
+  }, [])
+
   const handleOnclick = (
     item: any,
     childIndex?: any,
     key?: string,
-    params?: string | string[] | undefined
+    params?: string | string[] | undefined,
   ) => {
     const targetSlug =
       item.child.length === 0
@@ -180,13 +191,13 @@ export default function SideBar({ from }: { from: string }) {
               ? {
                   padding: '4px',
                   borderRadius: '4px',
-                  color: 'var(--mantine-color-turquoise-6)'
+                  color: 'var(--mantine-color-turquoise-6)',
                 }
               : {
                   padding: '4px',
                   borderRadius: '4px',
                   backgroundColor: 'var(--mantine-color-turquoise-1)',
-                  color: 'var(--mantine-color-turquoise-6)'
+                  color: 'var(--mantine-color-turquoise-6)',
                 }
           }
         >
@@ -218,11 +229,11 @@ export default function SideBar({ from }: { from: string }) {
             style={
               child.slug === active[1]
                 ? {
-                    borderLeft: '1px solid var(--mantine-color-turquoise-6)'
+                    borderLeft: '1px solid var(--mantine-color-turquoise-6)',
                   }
                 : {
                     borderLeft: '1px solid var(--mantine-color-gray-3)',
-                    color: 'var(--mantine-color-gray-6)'
+                    color: 'var(--mantine-color-gray-6)',
                   }
             }
             label={child.label}

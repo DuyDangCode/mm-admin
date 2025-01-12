@@ -9,6 +9,7 @@ import { ReactNode, Suspense } from 'react'
 import UserContext from '@/contexts/UserContext'
 import { UserInterface } from '@/utils/response'
 import queryClient from '@/helpers/client'
+import Loading from './loading'
 
 const Providers = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname()

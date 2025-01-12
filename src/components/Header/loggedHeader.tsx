@@ -50,7 +50,7 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
       }
     },
     enabled: !!user,
-    staleTime: 0,
+    refetchInterval: 1000 * 60 * 5,
   })
 
   const onClickFunction: OnClickInterface = {

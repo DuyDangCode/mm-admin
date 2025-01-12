@@ -50,13 +50,13 @@ export const statsData = [
     label: 'Doanh thu',
     number: 500000,
     per: 34,
-    desc: 'Compare with previous quarter',
+    desc: 'So với quý trước',
   },
   {
     label: 'Lợi nhuận',
     number: 50000,
     per: 28,
-    desc: 'Compare with previous quarter',
+    desc: 'So với quý trước',
   },
 ]
 
@@ -94,4 +94,3 @@ const getData = async (user: any, selectedDay: Date) => {
     },
   })
 }
-

@@ -1,5 +1,11 @@
 import { LoadingOverlay, Container, Loader } from '@mantine/core'
-export default function Loading() {
+export default function DotLoading() {
+  // You can add any UI inside Loading, including a Skeleton.
+  // return (
+  //   <div className='w-full h-full flex justify-center items-center'>
+  //     <Loader type='dots' />
+  //   </div>
+  // )
   // You can add any UI inside Loading, including a Skeleton.
   return (
     <div className='flex justify-center items-center space-x-2'>

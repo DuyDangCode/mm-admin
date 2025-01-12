@@ -13,9 +13,9 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { use, useContext, useState } from 'react'
-import Loading from './loading'
 import dayjs from 'dayjs'
 import BackButton from '@/components/BackButton/backButton'
+import SkeletonLoading from '@/components/Loading/SkeletonLoading'
 
 function BillInfoField({
   label,
@@ -75,7 +75,7 @@ export default function ExportBillView({
   return (
     <ScrollArea className='h-full w-full z-[0]'>
       {bill.isPending ? (
-        <Loading />
+        <SkeletonLoading />
       ) : (
         <div className='flex flex-col gap-[24px] py-[16px] px-[16px] '>
           <Group>

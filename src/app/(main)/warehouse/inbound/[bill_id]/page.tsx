@@ -13,10 +13,10 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { use, useContext, useState } from 'react'
-import Loading from './loading'
 import dayjs from 'dayjs'
 import BackButton from '@/components/BackButton/backButton'
 import { formatMoney } from '@/utils/string'
+import SkeletonLoading from '@/components/Loading/SkeletonLoading'
 
 function BillInfoField({
   label,
@@ -75,8 +75,8 @@ export default function ExportBillView({
   const tabelHead = TheadLabels.map((i) => <Table.Th key={i}>{i}</Table.Th>)
   return (
     <ScrollArea className='h-full w-full z-[0]'>
-      {bill.isPending ? (
-        <Loading />
+      {bill.isPending || bill.isError ? (
+        <SkeletonLoading />
       ) : (
         <div className='flex flex-col gap-[24px] py-[16px] px-[16px] '>
           <Group>

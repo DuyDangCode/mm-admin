@@ -152,63 +152,59 @@ export default function OnlineOrderSegment() {
 
   return (
     <ScrollArea className='h-full w-full z-[0]' py='1rem' px='2rem'>
-          
-        <Stack className='flex flex-col gap-[16px]'>
-          <Group justify='space-between'>
-            <Title order={4}>Quản lí đơn hàng</Title>
-            <Group>
-              <Text size='sm' fw='700'>
-                Trạng thái giao hàng:{' '}
-              </Text>
-              <Select
-                w='fit-content'
-                data={shipmentState}
-                value={shipmentFilter}
-                onChange={(value) => {
-                  setShipmentFilter(value)
-                  setPage(1)
-                }}
-                comboboxProps={comboboxStyles}
-              />
-            </Group>
+      <Stack className='flex flex-col gap-[16px]'>
+        <Group justify='space-between'>
+          <Title order={4}>Quản lí đơn hàng</Title>
+          <Group>
+            <Text size='sm' fw='700'>
+              Trạng thái giao hàng:{' '}
+            </Text>
+            <Select
+              w='fit-content'
+              data={shipmentState}
+              value={shipmentFilter}
+              onChange={(value) => {
+                setShipmentFilter(value)
+                setPage(1)
+              }}
+              comboboxProps={comboboxStyles}
+            />
           </Group>
+        </Group>
 
-          {orders.isPending || numberOfOrder.isPending ? (
-            <div className='w-full h-[500px] flex justify-center items-center'>
-              <Loader type='dots' />
+        {orders.isPending || numberOfOrder.isPending ? (
+          <div className='w-full h-[500px] flex justify-center items-center'>
+            <Loader type='dots' />
+          </div>
+        ) : (
+          <div>
+            <Text>
+              Số đơn hàng hiện có:{' '}
+              <span
+                style={{
+                  fontWeight: '700',
+                  color: 'var(--mantine-color-turquoise-6)',
+                }}
+              >
+                {calPages(numberOfOrder.data)}
+              </span>
+            </Text>
+            <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
+              <OrderTable orders={orders.data} />
+              <Pagination
+                classNames={{
+                  control: 'pagination-control',
+                }}
+                className='self-center'
+                total={Math.ceil((calPages(numberOfOrder.data) as number) / 10)}
+                value={activePage}
+                onChange={setPage}
+                mt='sm'
+              />
             </div>
-          ) : (
-            <div>
-              <Text>
-                Số đơn hàng hiện có:{' '}
-                <span
-                  style={{
-                    fontWeight: '700',
-                    color: 'var(--mantine-color-turquoise-6)',
-                  }}
-                >
-                  {calPages(numberOfOrder.data)}
-                </span>
-              </Text>
-              <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
-                <OrderTable orders={orders.data} />
-                <Pagination
-                  classNames={{
-                    control: 'pagination-control',
-                  }}
-                  className='self-center'
-                  total={Math.ceil(
-                    (calPages(numberOfOrder.data) as number) / 10,
-                  )}
-                  value={activePage}
-                  onChange={setPage}
-                  mt='sm'
-                />
-              </div>
-            </div>
-          )}
-        </Stack>
-          
+          </div>
+        )}
+      </Stack>
     </ScrollArea>
   )
 }

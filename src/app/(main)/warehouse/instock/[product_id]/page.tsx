@@ -33,7 +33,6 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import Loading from './loading'
 import BackButton from '@/components/BackButton/backButton'
 import { IconArrowDown, IconArrowUp, IconEditCircle } from '@tabler/icons-react'
 import { formatMoney } from '@/utils/string'

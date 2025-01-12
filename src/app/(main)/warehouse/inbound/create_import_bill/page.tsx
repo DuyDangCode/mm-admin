@@ -37,10 +37,10 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { usePathname, useRouter } from 'next/navigation'
 import { useContext, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import Loading from './loading'
 import dayjs from 'dayjs'
 import { productService } from '@/services/productService'
 import { formatMoney } from '@/utils/string'
+import DotLoading from '@/components/Loading/DotLoading'
 
 function CreateNewProductModal({
   opened,
@@ -372,7 +372,7 @@ export default function CreateImportBillPage() {
           <Flex direction='column-reverse' gap='16'>
             {createExportBillMutation.isPending ||
             createProductMutation.isPending ? (
-              <Loading />
+              <DotLoading />
             ) : (
               <Flex className='rounded-[8px] border-[1px]' p='16'>
                 <Stack justify='space-between'>

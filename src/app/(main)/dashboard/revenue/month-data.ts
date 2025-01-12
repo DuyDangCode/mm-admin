@@ -78,13 +78,13 @@ export const statsData = [
     label: 'Doanh thu',
     number: 500000,
     per: 34,
-    desc: 'Compare with previous month',
+    desc: 'So với tháng trước',
   },
   {
     label: 'Lợi nhuận',
     number: 50000,
     per: 28,
-    desc: 'Compare with previous month',
+    desc: 'So với tháng trước',
   },
 ]
 
@@ -92,4 +92,3 @@ export const segmentData = [
   { value: 'general', label: 'Tổng' },
   { value: 'per', label: 'Theo ngày' },
 ]
-

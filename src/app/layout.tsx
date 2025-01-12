@@ -37,7 +37,7 @@ export default function RootLayout({
         className={`${inter.className} h-full`}
         style={{ backgroundColor: '#f1f2f5' }}
       >
-        <Suspense>
+        <Suspense fallback={<Loading />}>
           <Providers>
             <MantineProvider theme={theme} defaultColorScheme='light'>
               <TanStackProvider>
