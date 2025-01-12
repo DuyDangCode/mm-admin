@@ -1,4 +1,5 @@
 'use client'
+import '@/styles/global.css'
 import {
   Stack,
   Group,
@@ -12,16 +13,17 @@ import {
   Input,
   Textarea,
   Box,
+  FileInput,
 } from '@mantine/core'
 import NextImage from 'next/image'
 import { useDisclosure } from '@mantine/hooks'
-
 import defaultAvatar from '@/public/pic/Avatar.png'
 import queryClient from '@/helpers/client'
 import { useRouter } from 'next/navigation'
 import { IconMapPinFilled } from '@tabler/icons-react'
-import { useContext, useRef, useState } from 'react'
+import { useContext, useRef, useState, useMemo } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { constant } from '@/utils/constant'
 import toast, { Toaster } from 'react-hot-toast'
 import {
   checkAddressFormat,
@@ -31,7 +33,9 @@ import {
 } from '@/utils/regex'
 import { userService } from '@/services/userService'
 import UserContext from '@/contexts/UserContext'
-import AccountNav from '@/components/Account/nav'
+import { FilePreview } from '@/types/file'
+import dynamic from 'next/dynamic'
+import { Pos } from '@/types/mapType'
 
 const AccountPage = () => {
   const { user } = useContext(UserContext)
@@ -49,12 +53,11 @@ const AccountPage = () => {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
-  const [avatar, setAvatar] = useState<any>(null)
-  const [avatarInput, setAvatarInput] = useState<any>(null)
+  const [avatar, setAvatar] = useState<string>()
+  const [avatarInput, setAvatarInput] = useState<FilePreview>()
   const [email, setEmail] = useState('')
 
   const [enableBox1, setEnableBox1] = useState(false)
-  const [enableBox2, setEnableBox2] = useState(false)
 
   // store initial value
   const isSet = useRef(false)
@@ -62,22 +65,22 @@ const AccountPage = () => {
   let initialEmail = useRef('')
   let initialPhone = useRef('')
   let initialAddress = useRef('')
-  let initialImage = useRef(null)
 
   if (!isSet.current && userInfor.isSuccess) {
     initialName.current = userInfor.data.display_name
     initialEmail.current = userInfor.data.email
     initialPhone.current = userInfor.data.phone
-    initialAddress.current = userInfor.data.user_attributes.address
-    initialImage.current = userInfor.data.user_attributes.avatar
-      ? userInfor.data.user_attributes.avatar
-      : 'https://res.cloudinary.com/dqcsednbr/image/upload/v1732502600/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5_pyvagm.jpg'
+    if (userInfor.data?.user_attributes?.address)
+      initialAddress.current = userInfor.data.user_attributes.address
+    else {
+      const userAttributes = JSON.parse(userInfor.data.user_attributes)
+      initialAddress.current = userAttributes.address
+    }
     setName(initialName.current)
     setPhone(initialPhone.current)
     setAddress(initialAddress.current)
-    setAvatar(initialImage.current)
-    setAvatarInput(initialImage.current)
     setEmail(initialEmail.current)
+    setAvatar(userInfor.data?.avatar || constant.DEFAULT_AVATAR)
 
     isSet.current = true
   }
@@ -94,55 +97,103 @@ const AccountPage = () => {
   const token = user?.accessToken
   const [opened, { open, close }] = useDisclosure(false)
 
-  const userMutation = useMutation({
-    mutationKey: ['update-user'],
-    mutationFn: () =>
-      userService.updateUser(userId, token, name, phone, address, avatar),
+  const namePhoneMutation = useMutation({
+    mutationKey: ['update-user', 'name', 'phone'],
+    mutationFn: () => {
+      const updateUserPromise = userService.updateNamePhone(
+        userId,
+        token,
+        name,
+        phone,
+      )
+      toast.promise(updateUserPromise, {
+        success: "Cập nhập thành công'",
+        error: 'Cập nhập thất bại.',
+        loading: 'Đang xử lý',
+      })
+      return updateUserPromise
+    },
+
     onSuccess: async (res) => {
-      toast.success('Cập nhập thành công')
       await queryClient.refetchQueries({
         queryKey: ['userInfor'],
         type: 'active',
         exact: true,
       })
     },
-    onError: (err) => {
-      toast.error('Cập nhập thất bại.')
-      console.log('err: ', err)
+    throwOnError: false,
+  })
+  const avatarMutation = useMutation({
+    mutationKey: ['update-user', 'avatar'],
+    mutationFn: (newAvatar: File) => {
+      const updateUserPromise = userService.updateAvatar(
+        userId,
+        token,
+        newAvatar,
+      )
+      toast.promise(updateUserPromise, {
+        success: "Cập nhập thành công'",
+        error: 'Cập nhập thất bại.',
+        loading: 'Đang xử lý',
+      })
+      return updateUserPromise
     },
-    retry: 3,
+
+    onSuccess: async (res) => {
+      await queryClient.refetchQueries({
+        queryKey: ['userInfor'],
+        type: 'active',
+        exact: true,
+      })
+    },
+    throwOnError: false,
   })
 
-  const updateClick = async () => {
-    const a = await userMutation.mutateAsync()
+  const selectAvatarImage = (newAvatar: File | null) => {
+    if (!newAvatar) return
+    setAvatarInput({
+      file: newAvatar,
+      previewUrl: URL.createObjectURL(newAvatar),
+    })
   }
-
   return (
     <Stack w={'100%'} h={'100%'} px={100}>
-      <Modal opened={opened} onClose={close} centered>
+      <Modal
+        opened={opened}
+        onClose={() => {
+          close()
+          setAvatarInput(undefined)
+        }}
+        centered
+      >
         <Stack>
           <Stack>
-            <Text>Đường dẫn avatar: </Text>
-            <Input
-              value={avatarInput}
-              onChange={(event) => {
-                setAvatarInput(event.target.value)
-              }}
+            {/* <Text>Chọn ảnh</Text> */}
+            {avatarInput && (
+              <img
+                src={avatarInput?.previewUrl}
+                style={{ width: '200px', height: 'auto' }}
+              />
+            )}
+            <FileInput
+              accept='image/*'
+              withAsterisk
+              clearable
+              onChange={selectAvatarImage}
+              placeholder='Chọn ảnh'
             />
           </Stack>
           <Group w={'100%'} justify='space-evenly'>
             <Button
               h={'1.25 rem'}
               bg={'transparent'}
-              className='text-[#02B1AB] border-0'
-              onClick={() => {
-                if (avatarInput != '') {
-                  setAvatar(avatarInput)
-                  updateClick()
-                  close()
-                } else {
-                  toast.error('Đường dẫn không thể để trống.')
-                }
+              className='text-[#02B1AB] border-0 hover:text-[#02B1AB]'
+              onClick={async () => {
+                if (!avatarInput?.file) return
+                setAvatar(avatarInput.previewUrl)
+                setAvatarInput(undefined)
+                close()
+                avatarMutation.mutate(avatarInput.file)
               }}
             >
               Lưu
@@ -150,9 +201,9 @@ const AccountPage = () => {
             <Button
               h={'1.25 rem'}
               bg={'transparent'}
-              className=' text-[#02B1AB] border-0'
+              className=' text-[#02B1AB] border-0 hover:text-[#02B1AB]'
               onClick={() => {
-                setAvatarInput('')
+                setAvatarInput(undefined)
                 close()
               }}
             >
@@ -184,7 +235,7 @@ const AccountPage = () => {
             bg={'transparent'}
             h={25}
             w={120}
-            className=' text-[#02B1AB] font-light border-[1.5px] border-[#02B1AB] rounded-[5px]'
+            className=' text-[#02B1AB] font-light border-[1.5px] border-[#02B1AB] rounded-[5px] hover:text-[#02B1AB]'
             onClick={() => {
               open()
             }}
@@ -201,7 +252,7 @@ const AccountPage = () => {
             {enableBox1 && (
               <Button
                 bg={'transparent'}
-                className=' h-5 text-[#02B1AB] border-0'
+                className=' h-5 text-[#02B1AB] border-0 hover:text-[#02B1AB]'
                 //style={{ height: '1.25rem', color: '#02B1AB' }}
                 onClick={() => {
                   returnInitialValue(0)
@@ -213,7 +264,7 @@ const AccountPage = () => {
             )}
             <Button
               bg={'transparent'}
-              className=' h-5 text-[#02B1AB] border-0'
+              className=' h-5 text-[#02B1AB] border-0 hover:text-[#02B1AB]'
               onClick={() => {
                 if (enableBox1) {
                   // input valid check function will return null
@@ -224,7 +275,7 @@ const AccountPage = () => {
                     returnInitialValue(0)
                     toast.error('Số điện thoại không hợp lệ')
                   } else {
-                    updateClick()
+                    namePhoneMutation.mutate()
                   }
                 }
                 setEnableBox1(!enableBox1)
@@ -259,54 +310,6 @@ const AccountPage = () => {
           />
         </Stack>
       </Group>
-      {/* <Stack p={20} bg={'white'} className='rounded-[10px]'> */}
-      {/*   <Group justify='space-between' w={'100%'}> */}
-      {/*     <Group className='gap-2'> */}
-      {/*       <IconMapPinFilled style={{ color: '#02B1AB' }} /> */}
-      {/*       <Text className='text-[#02B1AB] font-bold'>Địa chỉ</Text> */}
-      {/*     </Group> */}
-      {/*     <Group gap={0}> */}
-      {/*       <Button */}
-      {/*         onClick={() => { */}
-      {/*           if (enableBox2) { */}
-      {/*             // input valid check function will return null */}
-      {/*             if (checkAddressFormat(address)) { */}
-      {/*               toast.error('Địa chỉ không hợp lệ') */}
-      {/*               returnInitialValue(1) */}
-      {/*             } else { */}
-      {/*               updateClick() */}
-      {/*             } */}
-      {/*           } */}
-      {/*           setEnableBox2(!enableBox2) */}
-      {/*         }} */}
-      {/*         bg={'transparent'} */}
-      {/*         className=' h-5 cursor-pointer text-[#02B1AB]  border-0' */}
-      {/*       > */}
-      {/*         {enableBox2 ? 'Lưu' : 'Thay đổi'} */}
-      {/*       </Button> */}
-      {/*       {enableBox2 && ( */}
-      {/*         <Button */}
-      {/*           onClick={() => { */}
-      {/*             returnInitialValue(1) */}
-      {/*             setEnableBox2(!enableBox2) */}
-      {/*           }} */}
-      {/*           bg={'transparent'} */}
-      {/*           className=' h-5 text-[#02B1AB] border-0' */}
-      {/*         > */}
-      {/*           Hủy */}
-      {/*         </Button> */}
-      {/*       )} */}
-      {/*     </Group> */}
-      {/*   </Group> */}
-      {/*   <Textarea */}
-      {/*     withAsterisk */}
-      {/*     disabled={!enableBox2} */}
-      {/*     value={address} */}
-      {/*     onChange={(event) => { */}
-      {/*       setAddress(event.currentTarget.value) */}
-      {/*     }} */}
-      {/*   /> */}
-      {/* </Stack> */}
       {userInfor.isPending && (
         <LoadingOverlay
           visible={true}

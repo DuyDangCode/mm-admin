@@ -1,4 +1,9 @@
-import { Bill_Address, Bill_Payment, Customer_In_Bill, Supplier } from "./object"
+import {
+  Bill_Address,
+  Bill_Payment,
+  Customer_In_Bill,
+  Supplier,
+} from './object'
 
 export interface UserRequest {
   username: string
@@ -18,8 +23,8 @@ export interface UserAttributesRequest {
 }
 
 export interface Item_Products {
-  price: number,
-  quantity: number,
+  price: number
+  quantity: number
   productId: string
 }
 
@@ -28,7 +33,7 @@ export interface Products {
 }
 export interface Bill_Import_Request {
   bill_note: string
-  tax: number,
+  tax: number
   supplier: Supplier
   products: Products[]
   bill_payment: {
@@ -48,7 +53,7 @@ export interface Bill_Export_Request {
 
 export interface Create_Product {
   name: string
-  thumb: string
+  thumb: File | null
   categories: string[]
   price: number
   quantity: number

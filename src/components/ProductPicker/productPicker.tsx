@@ -1,8 +1,8 @@
-'use client';
-import queryClient from '@/helpers/client';
-import { categoryService } from '@/services/categoryService';
-import { productService } from '@/services/productService';
-import { Category, Product } from '@/utils/response';
+'use client'
+import queryClient from '@/helpers/client'
+import { categoryService } from '@/services/categoryService'
+import { productService } from '@/services/productService'
+import { Category, Product } from '@/utils/response'
 import {
   Image,
   ActionIcon,
@@ -25,18 +25,18 @@ import {
   Badge,
   UnstyledButton,
   Loader,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+} from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import {
   IconLayoutList,
   IconCategory,
   IconSearch,
   IconX,
-} from '@tabler/icons-react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import BackButton from '../BackButton/backButton';
+} from '@tabler/icons-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import BackButton from '../BackButton/backButton'
 
 function ProductSkeleton() {
   const skeletons = Array(4).fill(
@@ -44,21 +44,21 @@ function ProductSkeleton() {
       <Skeleton h='150' w='200' radius='8px' animate />
       <Skeleton h='10' w='200' radius='8px' animate />
       <Skeleton h='10' w='100' radius='8px' animate />
-    </Stack>
-  );
+    </Stack>,
+  )
   return (
     <Flex wrap='wrap' gap='16'>
       {skeletons}
     </Flex>
-  );
+  )
 }
 
 function ProductCard({
   data,
   onChoose,
 }: {
-  data: Product | undefined;
-  onChoose: any;
+  data: Product | undefined
+  onChoose: any
 }) {
   return (
     <Card shadow='sm' padding={0} radius='md' withBorder>
@@ -85,7 +85,7 @@ function ProductCard({
         </Button>
       </Stack>
     </Card>
-  );
+  )
 }
 
 export default function ProductPicker({
@@ -94,50 +94,51 @@ export default function ProductPicker({
   type = 'normal',
   onChoose,
 }: {
-  categories: Category[] | undefined;
-  label: string;
-  type?: string;
-  onChoose: any;
+  categories: Category[] | undefined
+  label: string
+  type?: string
+  onChoose: any
 }) {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [displayType, setDisplayType] = useState(['filled', 'default']);
-  const [keyword, setKeyword] = useState('');
-  const [searching, setSearching] = useState('sleeping');
-  const [productData, setProductData] = useState<Product[]>();
-  const [categoryId, setCategoryId] = useState<string>('');
+  const [opened, { open, close }] = useDisclosure(false)
+  const [displayType, setDisplayType] = useState(['filled', 'default'])
+  const [keyword, setKeyword] = useState('')
+  const [searching, setSearching] = useState('sleeping')
+  const [productData, setProductData] = useState<Product[]>()
+  const [categoryId, setCategoryId] = useState<string>('')
 
   const searchMutation = useMutation({
     mutationKey: ['search', keyword],
     mutationFn: () => {
-      return productService.search(keyword, true);
+      return productService.search(keyword, true)
     },
     onSuccess: (data) => {
       if (data.length != 0) {
-        setSearching('success');
-        setProductData(data);
-      } else setSearching('failed');
+        setSearching('success')
+        setProductData(data)
+      } else setSearching('failed')
     },
-  });
+  })
   const productByCategory = useQuery({
     queryKey: ['products_by_category', categoryId],
     queryFn: () => {
-      return productService.getAllProductsByCategory(categoryId);
+      return productService.getAllProductsByCategory(categoryId)
     },
-  });
+    enabled: !!categoryId && categoryId.length > 0,
+  })
 
   const search = async () => {
-    setSearching('pending');
-    searchMutation.mutate();
-  };
+    setSearching('pending')
+    searchMutation.mutate()
+  }
 
   const handleChooseProduct = (data: Product) => {
-    close();
-    onChoose(data);
-  };
+    close()
+    onChoose(data)
+  }
 
   const handleChooseCategory = (id: string) => {
-    setCategoryId(id);
-  };
+    setCategoryId(id)
+  }
 
   const productsBySearchElement = (
     <Flex wrap='wrap' gap='16'>
@@ -148,28 +149,27 @@ export default function ProductPicker({
         />
       ))}
     </Flex>
-  );
+  )
 
   const categoryCards = (
     <Flex wrap='wrap' gap='1rem'>
       {categories
         ?.filter((i) => {
-          if (keyword === '') return true;
+          if (keyword === '') return true
           else
-            return i.category_name
-              .toLowerCase()
-              .includes(keyword.toLowerCase());
+            return i.category_name.toLowerCase().includes(keyword.toLowerCase())
         })
-        .map((category) => (
+        .map((category, index) => (
           <Button
             variant='default'
             onClick={() => handleChooseCategory(category._id)}
+            key={index}
           >
             {category.category_name}
           </Button>
         ))}
     </Flex>
-  );
+  )
 
   const categoryList = (
     <Table
@@ -180,11 +180,11 @@ export default function ProductPicker({
       <Table.Tbody>
         {categories
           ?.filter((i) => {
-            if (keyword === '') return true;
+            if (keyword === '') return true
             else
               return i.category_name
                 .toLowerCase()
-                .includes(keyword.toLowerCase());
+                .includes(keyword.toLowerCase())
           })
           .map((category) => (
             <Table.Tr
@@ -197,7 +197,7 @@ export default function ProductPicker({
           ))}
       </Table.Tbody>
     </Table>
-  );
+  )
 
   return (
     <>
@@ -218,12 +218,12 @@ export default function ProductPicker({
                 placeholder='Tìm kiếm danh mục hoặc sản phẩm.'
                 value={keyword}
                 onChange={(event) => {
-                  setKeyword(event.currentTarget.value);
-                  setSearching('sleeping');
+                  setKeyword(event.currentTarget.value)
+                  setSearching('sleeping')
                 }}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') {
-                    search();
+                    search()
                   }
                 }}
                 leftSectionPointerEvents='painted'
@@ -231,7 +231,7 @@ export default function ProductPicker({
                   <ActionIcon variant='white' color='gray'>
                     <IconSearch
                       onClick={() => {
-                        search();
+                        search()
                       }}
                       style={{ height: '1.5rem', width: '1.5rem' }}
                     />
@@ -243,7 +243,7 @@ export default function ProductPicker({
                     <ActionIcon variant='white' color='gray'>
                       <IconX
                         onClick={() => {
-                          setKeyword('');
+                          setKeyword('')
                         }}
                         style={{ height: '1.5rem', width: '1.5rem' }}
                       />
@@ -277,15 +277,15 @@ export default function ProductPicker({
                 {(() => {
                   switch (searching) {
                     case 'sleeping':
-                      return <></>;
+                      return <></>
                     case 'pending':
-                      return <ProductSkeleton />;
+                      return <ProductSkeleton />
                     case 'success':
-                      return productsBySearchElement;
+                      return productsBySearchElement
                     case 'failed':
-                      return <p className='mt-[24px]'>Không tìm thấy</p>;
+                      return <p className='mt-[24px]'>Không tìm thấy</p>
                     default:
-                      return <></>;
+                      return <></>
                   }
                 })()}
               </ScrollArea>
@@ -300,20 +300,23 @@ export default function ProductPicker({
                     <BackButton fn={() => setCategoryId('')} />
                     {productByCategory.data?.length !== 0 ? (
                       <Flex wrap='wrap' gap='16' mt='16'>
-                        {productByCategory.data?.map((product) => {
-                          const productWithCategory: Product = {
-                            ...product,
-                            product_categories: [categoryId],
-                          };
-                          return (
-                            <ProductCard
-                              data={productWithCategory}
-                              onChoose={() =>
-                                handleChooseProduct(productWithCategory)
-                              }
-                            />
-                          );
-                        })}
+                        {productByCategory.data?.map(
+                          (product: any, index: number) => {
+                            const productWithCategory: Product = {
+                              ...product,
+                              product_categories: [categoryId],
+                            }
+                            return (
+                              <ProductCard
+                                data={productWithCategory}
+                                key={index}
+                                onChoose={() =>
+                                  handleChooseProduct(productWithCategory)
+                                }
+                              />
+                            )
+                          },
+                        )}
                       </Flex>
                     ) : (
                       <div className='h-full w-full text-center'>
@@ -352,5 +355,5 @@ export default function ProductPicker({
         </Button>
       )}
     </>
-  );
+  )
 }

@@ -9,6 +9,7 @@ import {
   Loader,
   Stack,
   Notification,
+  Indicator,
 } from '@mantine/core'
 // import '../../app/global.css';
 import {
@@ -78,7 +79,18 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
       {/* <LanguagePicker /> */}
       <Menu trigger='hover' openDelay={100} closeDelay={400} zIndex={1002}>
         <Menu.Target>
-          <IconBell color='#02B1AB' className={classes.hoverIcon} />
+          <Indicator
+            color='red'
+            size={6}
+            position='top-start'
+            processing
+            offset={3}
+            disabled={
+              !(notifications.isSuccess && notifications.data.length > 0)
+            }
+          >
+            <IconBell color='#02B1AB' className={classes.hoverIcon} />
+          </Indicator>
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item>
@@ -90,6 +102,7 @@ const LoggedHeader = ({ user, setUser }: { user: any; setUser: any }) => {
                     <Notification
                       title='Sản phẩm sắp hết hàng'
                       key={index}
+                      withCloseButton={false}
                       onClick={() =>
                         router.push(`/warehouse/instock/${notification._id}`)
                       }
