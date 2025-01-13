@@ -5,6 +5,7 @@ export type Pos = {
 export type LeafletMapProps = {
   allPositions: Pos[] | undefined
   zoom: number
+  locationInfo?: string[]
 }
 
 export type DeliveryDetailData = {

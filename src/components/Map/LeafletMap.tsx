@@ -12,7 +12,7 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import '@/styles/map.css'
 import { LeafletMapProps } from '@/types/mapType'
 
-function Map({ allPositions, zoom }: LeafletMapProps) {
+function Map({ allPositions, zoom, locationInfo }: LeafletMapProps) {
   const mapContainer = useRef<any>(null)
   const map = useRef<any>(null)
   const [zoomState] = useState(zoom)
@@ -31,58 +31,77 @@ function Map({ allPositions, zoom }: LeafletMapProps) {
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map.current)
 
-    var taxiIcon = L.icon({
-      iconUrl: 'https://img.icons8.com/fluency/48/truck.png',
+    var truckIcon = L.divIcon({
+      html: `<div style="width: 30px; height: 30px; background-image: url('https://img.icons8.com/fluency/48/truck.png'); background-size: cover;"></div>`,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    })
+
+    var homeIcon = L.icon({
+      iconUrl:
+        'https://img.icons8.com/?size=100&id=12229&format=png&color=000000',
       iconSize: [30, 30],
     })
 
-    let marker = L.marker(L.latLng(allPositions[0].lat, allPositions[0].lng), {
-      icon: taxiIcon,
-    }).addTo(map.current)
+    let truckMarker = L.marker(
+      L.latLng(allPositions[0].lat, allPositions[0].lng),
+      {
+        icon: truckIcon,
+      },
+    ).addTo(map.current)
 
-    allPositions.forEach((pos) => {
-      console.log(pos)
-      L.marker(L.latLng(pos.lat, pos.lng)).addTo(map.current)
+    allPositions.forEach((pos, index) => {
+      if (index == 0) {
+        const storeLocaion = L.marker(L.latLng(pos.lat, pos.lng), {
+          icon: homeIcon,
+        }).addTo(map.current)
+        storeLocaion.bindTooltip('Đây là kho', {
+          permanent: false,
+          direction: 'top',
+        })
+      } else {
+        const location = L.marker(L.latLng(pos.lat, pos.lng)).addTo(map.current)
+        location.bindTooltip(`Đơn hàng số ${index}`, {
+          permanent: false,
+          direction: 'top',
+        })
+      }
     })
     // @ts-ignore
     L.Routing.control({
       waypoints: allPositions.map((pos) => L.latLng(pos.lat, pos.lng)),
       show: true,
+      createMarker: function () {
+        return null
+      },
+      // draggableWaypoints: false,
+      // routeWhileDragging: false,
     })
       .on('routesfound', function (e: any) {
         var routes = e.routes
-        console.log('FOund route')
-        e.routes[0].coordinates.forEach(function (coord: any, index: any) {
+        const coordinates = routes[0].coordinates
+        let previousCoord = coordinates[0]
+        coordinates.forEach(function (coord: any, index: any) {
           setTimeout(function () {
-            marker.setLatLng([coord.lat, coord.lng])
+            const deltaX = coord.lng - previousCoord.lng
+            truckMarker.setLatLng([coord.lat, coord.lng])
+            const truckElement = truckMarker.getElement()
+            if (truckElement) {
+              const currentTransform = truckElement.style.transform
+              if (deltaX > 0) {
+                truckElement.style.transform = `${currentTransform} scaleX(1)`
+              } else if (deltaX < 0) {
+                truckElement.style.transform = `${currentTransform} scaleX(-1)`
+              }
+            }
+
+            previousCoord = coord
           }, 50 * index)
         })
       })
       .addTo(map.current)
 
-    // map.current.on('click', function (e: any) {
-    //   var newMarker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map.current)
-    //   // @ts-ignore
-    //   L.Routing.control({
-    //     waypoints: [
-    //       L.latLng(center.lat, center.lng),
-    //       L.latLng(center.lat - 1, center.lng),
-    //       L.latLng(e.latlng.lat, e.latlng.lng),
-    //     ],
-    //     show: true,
-    //   })
-    //     .on('routesfound', function (e: any) {
-    //       var routes = e.routes
-    //       e.routes[0].coordinates.forEach(function (coord: any, index: any) {
-    //         setTimeout(function () {
-    //           marker.setLatLng([coord.lat, coord.lng])
-    //         }, 100 * index)
-    //       })
-    //     })
-    //     .addTo(map.current)
-
-    // @ts-ignore
-    // })
+    map.current.off('click')
   }, [allPositions, zoom])
 
   return (

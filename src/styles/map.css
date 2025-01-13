@@ -12,3 +12,12 @@
 .leaflet-control-container .leaflet-routing-container-hide {
   display: none;
 }
+
+.custom-truck-icon div {
+  transform-origin: left;
+  transition: transform 0.1s linear;
+}
+
+.flip-horizontal {
+  transform: scaleX(-1);
+}
