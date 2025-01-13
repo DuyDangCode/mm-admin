@@ -34,7 +34,6 @@ export default function DeliveryDetailPage({
       const deliveryService = new DeliveryService(user)
       const deliveryData = await deliveryService.getDelivery(deliveryId)
       const locations = deliveryData?.data?.metadata?.deliveries
-      console.log(deliveryData.data.metadata)
       return {
         pos: [
           ...locations.routes.map((item: string) => {
