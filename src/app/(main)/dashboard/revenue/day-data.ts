@@ -35,11 +35,15 @@ const getData = async (user: any, selectedDay: Date | string) => {
 }
 
 export const chartData = {
-  labels: ['Doanh thu', 'Lợi nhuận'],
+  labels: [''],
   datasets: [
     {
-      data: [3, 5],
-      backgroundColor: ['#165BAA', '#F765A3'],
+      data: [3],
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    },
+    {
+      data: [5],
+      backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
   ],
 }

@@ -309,14 +309,17 @@ export default function RevenuePage() {
         ) : (
           <StatisticChart
             chartData={{
-              labels: ['Doanh thu', 'Lợi nhuận'],
+              labels: [''],
               datasets: [
                 {
-                  data: [
-                    stats[index].selectTime.revenue,
-                    stats[index].selectTime.profit,
-                  ],
-                  backgroundColor: ['#165BAA', '#F765A3'],
+                  label: 'Doanh thu',
+                  data: [stats[index].selectTime.revenue],
+                  backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                },
+                {
+                  label: 'Lợi nhuận',
+                  data: [stats[index].selectTime.profit],
+                  backgroundColor: 'rgba(53, 162, 235, 0.5)',
                 },
               ],
             }}

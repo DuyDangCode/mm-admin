@@ -69,7 +69,6 @@ export default function StatisticChart({
   type = 0,
   user,
 }: Props) {
-  const [chartType, setChartType] = useState(segmentData.at(0)?.value)
   const [timeType, setTimeType] = useState(segmentData[1].label)
 
   const divideDay = (
@@ -159,50 +158,35 @@ export default function StatisticChart({
     }
   }, [barChartQuery.pending, startDay, endDay])
 
-  // if (type === 3) {
-  //   console.log('barChartQuery', barChartQuery.data)
-  // }
-
-  let pieChart = (
-    <div className={`w-[350px] aspect-square m-auto`}>
-      <Pie data={segment ? chartData.pie : chartData} />
+  return (
+    <div className='flex flex-col gap-[12px] flex-wrap items-end'>
+      {segment ? (
+        <div className='w-[700px]'>
+          <Bar
+            className={`w-[700px]`}
+            options={barOptions}
+            data={{
+              labels: chartData.bar?.labels,
+              datasets: [
+                {
+                  label: 'Doanh thu',
+                  data: barChartrRevenueData,
+                  backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                },
+                {
+                  label: 'Lợi nhuận',
+                  data: barChartrProfitData,
+                  backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                },
+              ],
+            }}
+          />
+        </div>
+      ) : (
+        <div className='w-[700px]'>
+          <Bar className='w-[700px]' data={chartData} options={barOptions} />
+        </div>
+      )}
     </div>
   )
-  let barChart = (
-    <Bar
-      className={`w-[700px]`}
-      options={barOptions}
-      data={{
-        labels: chartData.bar?.labels,
-        datasets: [
-          {
-            label: 'Doanh thu',
-            data: barChartrRevenueData,
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-          },
-          {
-            label: 'Lợi nhuận',
-            data: barChartrProfitData,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-          },
-        ],
-      }}
-    />
-  )
-  if (segment)
-    return (
-      <div className='flex flex-col gap-[12px] flex-wrap items-end'>
-        <SegmentedControl
-          className=''
-          size='sm'
-          value={chartType}
-          onChange={setChartType}
-          data={segmentData}
-        />
-        <div className='w-[700px]'>
-          {chartType === segmentData.at(0)?.value ? pieChart : barChart}
-        </div>
-      </div>
-    )
-  else return <div className='w-[700px]'>{pieChart}</div>
 }
