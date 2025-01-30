@@ -1,5 +1,4 @@
 'use client'
-
 import { Suspense, use, useContext, useMemo } from 'react'
 
 import { LoadingOverlay, Container, Loader } from '@mantine/core'
@@ -38,7 +37,7 @@ export default function DeliveryDetailPage({
         pos: [
           ...locations.routes.map((item: string) => {
             let pos = item.split(',')
-            return { lng: pos[0], lat: pos[1] }
+            return { lng: pos[1], lat: pos[0] }
           }),
         ],
         createAt: dayjs(

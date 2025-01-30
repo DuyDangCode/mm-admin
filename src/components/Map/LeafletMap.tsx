@@ -11,6 +11,7 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 
 import '@/styles/map.css'
 import { LeafletMapProps } from '@/types/mapType'
+import { randomColorCode } from '@/utils/color'
 
 function Map({ allPositions, zoom, locationInfo }: LeafletMapProps) {
   const mapContainer = useRef<any>(null)
@@ -31,32 +32,19 @@ function Map({ allPositions, zoom, locationInfo }: LeafletMapProps) {
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map.current)
 
-    var truckIcon = L.divIcon({
-      html: `<div style="width: 30px; height: 30px; background-image: url('https://img.icons8.com/fluency/48/truck.png'); background-size: cover;"></div>`,
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
-    })
-
     var homeIcon = L.icon({
       iconUrl:
         'https://img.icons8.com/?size=100&id=12229&format=png&color=000000',
       iconSize: [30, 30],
     })
 
-    let truckMarker = L.marker(
-      L.latLng(allPositions[0].lat, allPositions[0].lng),
-      {
-        icon: truckIcon,
-      },
-    ).addTo(map.current)
-
     allPositions.forEach((pos, index) => {
       if (index == 0) {
         const storeLocaion = L.marker(L.latLng(pos.lat, pos.lng), {
           icon: homeIcon,
         }).addTo(map.current)
-        storeLocaion.bindTooltip('Đây là kho', {
-          permanent: false,
+        storeLocaion.bindTooltip('Kho', {
+          permanent: true,
           direction: 'top',
         })
       } else {
@@ -67,39 +55,36 @@ function Map({ allPositions, zoom, locationInfo }: LeafletMapProps) {
         })
       }
     })
+
     // @ts-ignore
     L.Routing.control({
       waypoints: allPositions.map((pos) => L.latLng(pos.lat, pos.lng)),
+      lineOptions: {
+        styles: [{ opacity: 0 }],
+      },
       show: true,
       createMarker: function () {
         return null
       },
-      // draggableWaypoints: false,
-      // routeWhileDragging: false,
-    })
-      .on('routesfound', function (e: any) {
-        var routes = e.routes
-        const coordinates = routes[0].coordinates
-        let previousCoord = coordinates[0]
-        coordinates.forEach(function (coord: any, index: any) {
-          setTimeout(function () {
-            const deltaX = coord.lng - previousCoord.lng
-            truckMarker.setLatLng([coord.lat, coord.lng])
-            const truckElement = truckMarker.getElement()
-            if (truckElement) {
-              const currentTransform = truckElement.style.transform
-              if (deltaX > 0) {
-                truckElement.style.transform = `${currentTransform} scaleX(1)`
-              } else if (deltaX < 0) {
-                truckElement.style.transform = `${currentTransform} scaleX(-1)`
-              }
-            }
+    }).addTo(map.current)
 
-            previousCoord = coord
-          }, 50 * index)
-        })
-      })
-      .addTo(map.current)
+    for (let i = 0; i < allPositions.length - 1; i++) {
+      // @ts-ignore
+      L.Routing.control({
+        waypoints: [
+          L.latLng(allPositions[i].lat, allPositions[i].lng),
+          L.latLng(allPositions[i + 1].lat, allPositions[i + 1].lng),
+        ],
+        lineOptions: {
+          styles: [{ color: randomColorCode(), weight: 4 }],
+          // styles: lineStyles,
+        },
+        show: false,
+        createMarker: function () {
+          return null
+        },
+      }).addTo(map.current)
+    }
 
     map.current.off('click')
   }, [allPositions, zoom])
