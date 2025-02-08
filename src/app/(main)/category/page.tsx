@@ -168,133 +168,131 @@ export default function ManageStaffPage() {
 
   return (
     <ScrollArea className='h-full w-full z-[0]' py='1rem' px='2rem'>
-          
-        <Group justify='space-between'>
-          <Title order={4}>Quản lí danh mục</Title>
-          <Button className='bg-0-primary-color-6 text-white' onClick={open}>
-            Tạo danh mục mới
-          </Button>
-        </Group>
-        {categories.isPending || createCategoryMutation.isPending ? (
-          <div className='w-full h-[500px] flex justify-center items-center'>
-            <Loader type='dots' />
-          </div>
-        ) : (
-          <div className='mt-[16px]'>
-            <Text>
-              Số danh mục hiện có:{' '}
-              <span
-                style={{
-                  fontWeight: '700',
-                  color: 'var(--mantine-color-turquoise-6)',
-                }}
-              >
-                {categories.data?.length}
-              </span>
-            </Text>
-            <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
-              <Table
-                highlightOnHover
-                highlightOnHoverColor='turquoise.0'
-                verticalSpacing='sm'
-              >
-                <Table.Thead>
-                  <Table.Tr key='head'>{tabelHead}</Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {categories.data?.map((item) => (
-                    <Table.Tr key={`row-${item._id}`}>
-                      <Table.Td>{item._id}</Table.Td>
-                      <Table.Td>{item.category_name}</Table.Td>
-                      <Table.Td>
-                        {dayjs(item.createdAt).format('DD/MM/YYYY')}
-                      </Table.Td>
-                      <Table.Td
-                        className='cursor-pointer'
+      <Group justify='space-between'>
+        <Title order={4}>Quản lí danh mục</Title>
+        <Button className='bg-0-primary-color-6 text-white' onClick={open}>
+          Tạo danh mục mới
+        </Button>
+      </Group>
+      {categories.isPending || createCategoryMutation.isPending ? (
+        <div className='w-full h-[500px] flex justify-center items-center'>
+          <Loader type='dots' />
+        </div>
+      ) : (
+        <div className='mt-[16px]'>
+          <Text>
+            Số danh mục hiện có:{' '}
+            <span
+              style={{
+                fontWeight: '700',
+                color: 'var(--mantine-color-turquoise-6)',
+              }}
+            >
+              {categories.data?.length}
+            </span>
+          </Text>
+          <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
+            <Table
+              highlightOnHover
+              highlightOnHoverColor='turquoise.0'
+              verticalSpacing='sm'
+            >
+              <Table.Thead>
+                <Table.Tr key='head'>{tabelHead}</Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {categories.data?.map((item) => (
+                  <Table.Tr key={`row-${item._id}`}>
+                    <Table.Td>{item._id}</Table.Td>
+                    <Table.Td>{item.category_name}</Table.Td>
+                    <Table.Td>
+                      {dayjs(item.createdAt).format('DD/MM/YYYY')}
+                    </Table.Td>
+                    <Table.Td
+                      className='cursor-pointer'
+                      onClick={() => {
+                        setItem(item)
+                        updateHandlers.open()
+                      }}
+                    >
+                      <Text c='turquoise'>Sửa</Text>
+                    </Table.Td>
+                    <Table.Td className='cursor-pointer'>
+                      <Text
+                        c='red'
                         onClick={() => {
                           setItem(item)
-                          updateHandlers.open()
+                          deleteHandlers.open()
                         }}
                       >
-                        <Text c='turquoise'>Sửa</Text>
-                      </Table.Td>
-                      <Table.Td className='cursor-pointer'>
-                        <Text
-                          c='red'
-                          onClick={() => {
-                            setItem(item)
-                            deleteHandlers.open()
-                          }}
-                        >
-                          Xóa
-                        </Text>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-            </div>
+                        Xóa
+                      </Text>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
           </div>
-        )}
-        <Modal.Root size='auto' zIndex={10000} opened={opened} onClose={close}>
-          <Modal.Overlay />
-          <Modal.Content>
-            <Modal.Header>
-              <Modal.Title w='100%' ta='center'>
-                <Text fw={700}>Tạo danh mục</Text>
-              </Modal.Title>
-              <Modal.CloseButton />
-            </Modal.Header>
-            <Modal.Body px='lg'>{CreateForm}</Modal.Body>
-          </Modal.Content>
-        </Modal.Root>
-        <Modal.Root
-          size='auto'
-          zIndex={10000}
-          opened={updateOpened}
-          onClose={updateHandlers.close}
-        >
-          <Modal.Overlay />
-          <Modal.Content>
-            <Modal.Header>
-              <Modal.Title w='100%' ta='center'>
-                <Text fw={700}>Sửa danh mục</Text>
-              </Modal.Title>
-              <Modal.CloseButton />
-            </Modal.Header>
-            <Modal.Body px='lg'>{UpdateForm}</Modal.Body>
-          </Modal.Content>
-        </Modal.Root>
-        <Modal
-          className='absolute z-[10000]'
-          size='sm'
-          opened={deleteOpened}
-          onClose={() => deleteHandlers.close()}
-          centered
-          withCloseButton={false}
-        >
-          <Text w='100%' size='lg' fw='700' ta='center' my='lg'>
-            Xác nhận xóa danh mục
-          </Text>
-          <Group justify='center' mb='sm'>
-            <Button
-              size='md'
-              variant='outline'
-              onClick={() => deleteHandlers.close()}
-            >
-              Hủy
-            </Button>
-            <Button
-              size='md'
-              bg={'#02B1AB'}
-              className=' text-white'
-              onClick={() => deleteCategoryMutation.mutate(item?._id || '')}
-            >
-              Xác nhận
-            </Button>
-          </Group>
-        </Modal>
-          
+        </div>
+      )}
+      <Modal.Root size='auto' zIndex={10000} opened={opened} onClose={close}>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title w='100%' ta='center'>
+              <Text fw={700}>Tạo danh mục</Text>
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body px='lg'>{CreateForm}</Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+      <Modal.Root
+        size='auto'
+        zIndex={10000}
+        opened={updateOpened}
+        onClose={updateHandlers.close}
+      >
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title w='100%' ta='center'>
+              <Text fw={700}>Sửa danh mục</Text>
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body px='lg'>{UpdateForm}</Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+      <Modal
+        className='absolute z-[10000]'
+        size='sm'
+        opened={deleteOpened}
+        onClose={() => deleteHandlers.close()}
+        centered
+        withCloseButton={false}
+      >
+        <Text w='100%' size='lg' fw='700' ta='center' my='lg'>
+          Xác nhận xóa danh mục
+        </Text>
+        <Group justify='center' mb='sm'>
+          <Button
+            size='md'
+            variant='outline'
+            onClick={() => deleteHandlers.close()}
+          >
+            Hủy
+          </Button>
+          <Button
+            size='md'
+            bg={'#02B1AB'}
+            className=' text-white'
+            onClick={() => deleteCategoryMutation.mutate(item?._id || '')}
+          >
+            Xác nhận
+          </Button>
+        </Group>
+      </Modal>
     </ScrollArea>
   )
 }

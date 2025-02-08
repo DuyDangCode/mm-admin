@@ -1,14 +1,17 @@
 export type Pos = {
+  name?: string
+  address?: string
   lat: number
   lng: number
 }
 export type LeafletMapProps = {
-  allPositions: Pos[] | undefined
+  deliveryOrdersPos: Pos[] | undefined
+  nearesOrderPos: Pos[] | undefined
   zoom: number
-  locationInfo?: string[]
 }
 
 export type DeliveryDetailData = {
   createAt: string
+  orderIds: string[]
   pos: Pos[]
 }

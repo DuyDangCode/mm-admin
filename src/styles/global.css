@@ -8,6 +8,7 @@
 @tailwind components;
 @tailwind utilities;
 @import 'leaflet/dist/leaflet.css';
+@import url('https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.css');
 
 .pagination-control {
   &[data-active] {
