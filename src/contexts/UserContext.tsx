@@ -1,13 +1,13 @@
-import { createContext } from 'react';
+import { createContext } from 'react'
 
 const UserContext = createContext<UserContext>({
   user: null,
   setUser: (data: any) => {},
-});
+})
 
 interface UserContext {
-  user: any;
-  setUser: Function;
+  user: any
+  setUser: Function
 }
 
-export default UserContext;
+export default UserContext

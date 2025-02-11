@@ -39,6 +39,21 @@ class DeliveryService {
   deleteDelivery(id: string) {
     return axios.delete(`${this.url}/${id}`, { headers: this.hearders })
   }
+
+  addNearestOrderToDelivery(
+    id: string,
+    nearestOrderIds: string[],
+    radius: number,
+  ) {
+    return axios.patch(
+      `${this.url}/nearby-orders/${id}`,
+      {
+        orderIds: nearestOrderIds,
+        radius,
+      },
+      { headers: this.hearders },
+    )
+  }
 }
 
 export default DeliveryService

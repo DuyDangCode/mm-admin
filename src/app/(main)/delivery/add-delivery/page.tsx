@@ -37,7 +37,7 @@ export default function OnlineOrderSegment() {
   const [selectedOrders, setSelectedOrders] = useState<any>([])
   const router = useRouter()
   const [findByNearestPlaces, setFindByNearestPlaces] = useState(true)
-  const [radiusToFind, setRadiusToFind] = useState<string | number>(300)
+  const [radiusToFind, setRadiusToFind] = useState<string | number>(10)
 
   const orders = useQuery({
     queryKey: ['orders delivery', activePage],
@@ -50,17 +50,28 @@ export default function OnlineOrderSegment() {
 
   const nearestOrdersMutation = useMutation({
     mutationKey: ['nearest orders delivery', radiusToFind],
-    mutationFn: async (orderId: string) => {
-      const orderService = new OrderService(user)
-      const nearestOrders = await orderService.getAllNearestOrdersByIds(
-        [orderId],
-        radiusToFind,
-      )
-      return nearestOrders[0].nearbyOrders.filter(
-        (order: any) => order.id !== orderId,
-      )
+    mutationFn: (orderId: string) => {
+      return findNearestOrders([orderId], radiusToFind, user)
     },
   })
+
+  const findNearestOrders = async (
+    orderIds: string[],
+    radius: number | string,
+    user: any,
+  ) => {
+    const orderService = new OrderService(user)
+    const nearestOrders = await orderService.getAllNearestOrdersByIds(
+      orderIds,
+      radius,
+    )
+    return nearestOrders[0].nearbyOrders.filter((order: any) => {
+      for (let i = 0; i < orderIds.length; i++) {
+        if (order.id === orderIds[i]) return false
+      }
+      return true
+    })
+  }
 
   const numberOfOrder = useQuery({
     queryKey: ['numberOfOrder'],
@@ -70,6 +81,21 @@ export default function OnlineOrderSegment() {
     },
     enabled: !!user,
   })
+
+  const selectOrders = (items: any) => {
+    let tempSelectOrders = selectedOrders
+    L1: for (let i = 0; i < items.length; i++) {
+      for (let j = 0; j < tempSelectOrders.length; j++) {
+        if (tempSelectOrders[j].id === items[i].id) {
+          continue L1
+        }
+      }
+      console.log(items[i])
+      tempSelectOrders = [...tempSelectOrders, items[i]]
+    }
+    setSelectedOrders(tempSelectOrders)
+    toast.success('Đã thêm đơn hàng')
+  }
 
   const selectOrder = (item: any) => {
     for (let i = 0; i < selectedOrders.length; i++) {
@@ -107,19 +133,6 @@ export default function OnlineOrderSegment() {
       success: 'Tạo chuyến giao hàng thành công',
     })
   }
-  // useEffect(() => {
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       console.log('Vị trí hiện tại:', position.coords)
-  //       setStartLocation(
-  //         `${position.coords.longitude},${position.coords.latitude}`,
-  //       )
-  //     },
-  //     (error) => {
-  //       console.error('Lỗi khi lấy vị trí:', error)
-  //     },
-  //   )
-  // }, [])
   if (
     orders.isPending ||
     numberOfOrder.isPending ||
@@ -217,20 +230,46 @@ export default function OnlineOrderSegment() {
             </div>
           ) : (
             <p className='text-sm opacity-30 text-black'>
-              Không tìm thấy đơn hàng thỏa mãn
+              Không tìm thấy đơn hàng
             </p>
           )}
         </div>
 
         <div className='flex flex-col border-[0.5px] border-solid rounded-[4px] w-full py-[12px] px-[16px]'>
-          <Button
-            className='w-fit self-end'
-            onClick={() => {
-              createDelivery(selectedOrders)
-            }}
-          >
-            Tạo đơn vận chuyển
-          </Button>
+          <div className='flex w-full h-fit items-center justify-end gap-2'>
+            <Button
+              className='w-fit self-end'
+              onClick={async () => {
+                const nearestOrders = (
+                  await findNearestOrders(
+                    selectedOrders.map((order: any) => order.id),
+                    radiusToFind,
+                    user,
+                  )
+                ).map((i: Order) => ({
+                  id: i._id,
+                  createAt: dayjs(i.createdAt).format('DD/MM/YYYY'),
+                  customer: i.order_username,
+                  paymentStatus: i.order_payment.status,
+                  shipmentStatus: i.order_status,
+                  finalPrice: i.order_checkout.finalPrice,
+                  address: i.order_address.city,
+                }))
+                selectOrders(nearestOrders)
+              }}
+            >
+              Thêm các đơn hàng ở gần
+            </Button>
+
+            <Button
+              className='w-fit self-end'
+              onClick={() => {
+                createDelivery(selectedOrders)
+              }}
+            >
+              Tạo đơn vận chuyển
+            </Button>
+          </div>
           <h2 className='font-bold'>3. Danh sách chọn</h2>
           <OrderDeliveryTable
             orders={selectedOrders}

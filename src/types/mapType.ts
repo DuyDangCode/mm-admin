@@ -6,12 +6,13 @@ export type Pos = {
 }
 export type LeafletMapProps = {
   deliveryOrdersPos: Pos[] | undefined
-  nearesOrderPos: Pos[] | undefined
+  // nearesOrderPos: Pos[] | undefined
+  isShowDirection: boolean
   zoom: number
 }
 
 export type DeliveryDetailData = {
-  createAt: string
+  createAt?: string
   orderIds: string[]
   pos: Pos[]
 }
