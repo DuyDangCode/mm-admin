@@ -105,7 +105,7 @@ const CreateVoucher = () => {
     },
     onSuccess: (res) => {
       toast.success('Tạo thành công')
-      router.push('/manager/voucher')
+      router.push('/voucher')
     },
     onError: () => {
       toast.error('Thất bại. Hãy thử lại')

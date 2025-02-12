@@ -67,7 +67,7 @@ const VoucherDetail = ({
       queryClient.invalidateQueries({
         queryKey: ['voucher', voucherId],
       })
-      router.push('/manager/voucher')
+      router.push('/voucher')
     },
     onError: () => {
       toast.error('Thất bại. Hãy thử lại')

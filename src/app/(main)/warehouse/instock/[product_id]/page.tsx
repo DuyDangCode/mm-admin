@@ -153,7 +153,7 @@ export default function WarehouseProductPage({
         `${currentPath.substring(
           0,
           currentPath.lastIndexOf('/'),
-        )}?tab=${searchParamsHook.get('state')}`,
+        )}?tab=${searchParamsHook.get('state') || 'unpublish'}`,
       )
     },
     onError: (err) => {

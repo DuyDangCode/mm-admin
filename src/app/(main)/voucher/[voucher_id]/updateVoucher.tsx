@@ -351,4 +351,3 @@ const UpdateVoucher = ({ voucher, back }: { voucher: any; back: any }) => {
 }
 
 export default UpdateVoucher
-
