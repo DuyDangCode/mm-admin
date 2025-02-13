@@ -317,7 +317,7 @@ export default function WarehouseProductPage({
                 opened={opened}
                 onClose={() => {
                   close()
-                  setProductImage(undefined)
+                  setProductImageInput(undefined)
                 }}
                 centered
               >
