@@ -2,7 +2,11 @@
 import { ActionIcon, ActionIconGroup, Table, Text } from '@mantine/core'
 import { useContext, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { formatMoney, formatOrderId } from '@/utils/string'
+import {
+  formatDeliveryIdWithoutCreateAt,
+  formatMoney,
+  formatOrderId,
+} from '@/utils/string'
 import { DeliveryOrder, DeliveryStatus } from '@/types/deliveryType'
 import { paths } from '@/helpers/pathHelper'
 import { IconEye, IconTrash } from '@tabler/icons-react'
@@ -55,7 +59,7 @@ export default function DeliveryTable({ deliveries }: Props) {
 
   const tableBody = deliveries?.map((i) => (
     <Table.Tr key={i.id}>
-      <Table.Td>{formatOrderId(i.id, i.createAt)}</Table.Td>
+      <Table.Td>{formatDeliveryIdWithoutCreateAt(i.id)}</Table.Td>
       <Table.Td>{i.createAt}</Table.Td>
       <Table.Td>{mapStatus(i.status, statusMap)}</Table.Td>
       <Table.Td>

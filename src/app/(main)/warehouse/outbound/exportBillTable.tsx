@@ -2,7 +2,11 @@ import { Bill_Export } from '@/utils/response'
 import { Table, Text } from '@mantine/core'
 import { usePathname, useRouter } from 'next/navigation'
 import dayjs from 'dayjs'
-import { formatExportBillId, formatMoney } from '@/utils/string'
+import {
+  formatExportBillId,
+  formatExportBillIdWithoutCreateAt,
+  formatMoney,
+} from '@/utils/string'
 
 type tableType = {
   id: string
@@ -34,10 +38,7 @@ export default function ExportBillTable({
   const tableBody = bills?.map((bill) => (
     <Table.Tr key={bill.bill_info._id}>
       <Table.Td>
-        {formatExportBillId(
-          bill.bill_info._id,
-          dayjs(bill.bill_info.bill_date).format('DD/MM/YYYY').toString(),
-        )}
+        {formatExportBillIdWithoutCreateAt(bill.bill_info._id)}
       </Table.Td>
       <Table.Td>
         {dayjs(bill.bill_info.bill_date).format('DD/MM/YYYY').toString()}

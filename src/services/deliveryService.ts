@@ -54,6 +54,11 @@ class DeliveryService {
       { headers: this.hearders },
     )
   }
+
+  //this method will get all orders which is not shipped and is not added to any delivery
+  getAllOrdersNotShipping() {
+    return axios.get(`${this.url}/shipping`, { headers: this.hearders })
+  }
 }
 
 export default DeliveryService

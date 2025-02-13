@@ -44,6 +44,9 @@ export default function OnlineOrderSegment() {
     queryFn: () => {
       const orderService = new OrderService(user)
       return orderService.getAllOrder(10, activePage, 'shipping')
+
+      // const deliveryService = new DeliveryService(user)
+      // return deliveryService.getAllOrdersNotShipping()
     },
     enabled: !!user,
   })
@@ -90,7 +93,6 @@ export default function OnlineOrderSegment() {
           continue L1
         }
       }
-      console.log(items[i])
       tempSelectOrders = [...tempSelectOrders, items[i]]
     }
     setSelectedOrders(tempSelectOrders)

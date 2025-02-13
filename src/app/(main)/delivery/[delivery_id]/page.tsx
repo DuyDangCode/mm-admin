@@ -1,28 +1,17 @@
 'use client'
-import { Suspense, use, useContext, useMemo, useState } from 'react'
-import {
-  LoadingOverlay,
-  Container,
-  Loader,
-  NumberInput,
-  Switch,
-  Button,
-  ActionIcon,
-} from '@mantine/core'
+import { use, useContext, useMemo, useState } from 'react'
+import { Switch } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import UserContext from '@/contexts/UserContext'
 import DeliveryService from '@/services/deliveryService'
-import { DeliveryDetailData, Pos } from '@/types/mapType'
+import { DeliveryDetailData } from '@/types/mapType'
 import dynamic from 'next/dynamic'
-import { formatOrderId, formatOrderIdWithoutCreateAt } from '@/utils/string'
-import dayjs from 'dayjs'
+import {
+  formatDeliveryIdWithoutCreateAt,
+  formatOrderIdWithoutCreateAt,
+} from '@/utils/string'
 import BackButton from '@/components/BackButton/backButton'
-import OrderService from '@/services/orderService'
 import DotLoading from '@/components/Loading/DotLoading'
-
-import { IconSquarePlus } from '@tabler/icons-react'
-import toast from 'react-hot-toast'
-import { setuid } from 'process'
 
 export default function DeliveryDetailPage({
   params,
@@ -30,10 +19,8 @@ export default function DeliveryDetailPage({
   params: Promise<{ delivery_id: string }>
 }) {
   const deliveryId = use(params).delivery_id
-  // const [autoFindNearestOrder, setAutoFindNearestOrder] = useState(true)
   const [isShowDirection, setIsShowDirection] = useState(true)
   const { user } = useContext(UserContext)
-  // const [radius, setRadius] = useState<string | number>(10)
   const deliveryQuery = useQuery({
     queryKey: ['delivery', deliveryId],
     queryFn: async (): Promise<DeliveryDetailData> => {
@@ -47,7 +34,7 @@ export default function DeliveryDetailPage({
           const name =
             index == 0
               ? 'Kho'
-              : formatOrderIdWithoutCreateAt(locations?.orderIds[index - 1])
+              : `${index}. ${formatOrderIdWithoutCreateAt(locations?.orderIds[index - 1])}`
           return { lng: pos[1], lat: pos[0], name }
         }),
       }
@@ -64,37 +51,6 @@ export default function DeliveryDetailPage({
     [isShowDirection],
   )
 
-  // const nearestOrderQuery = useQuery({
-  //   queryKey: ['Nearest order query', radius],
-  //   queryFn: async () => {
-  //     const orderService = new OrderService(user)
-  //     if (!deliveryQuery.data?.orderIds) return
-  //     const ordersData = await orderService.getAllNearestOrdersByIds(
-  //       deliveryQuery.data?.orderIds,
-  //       radius,
-  //       1,
-  //       100,
-  //     )
-  //     return ordersData
-  //       .map((order: { nearbyOrders: {}[] }) => order.nearbyOrders)
-  //       .flat()
-  //       .map(
-  //         (orderInfo: {
-  //           _id: string
-  //           order_address: { city: string; longitude: string; latitude: string }
-  //         }) => {
-  //           return {
-  //             name: formatOrderIdWithoutCreateAt(orderInfo._id),
-  //             id: orderInfo._id,
-  //             lng: orderInfo.order_address.longitude,
-  //             lat: orderInfo.order_address.latitude,
-  //           }
-  //         },
-  //       )
-  //   },
-  //   enabled: deliveryQuery.isSuccess && autoFindNearestOrder,
-  // })
-
   if (deliveryQuery.isPending || deliveryQuery.isError)
     return (
       <div className='w-full h-full'>
@@ -107,7 +63,7 @@ export default function DeliveryDetailPage({
       <div className='flex flex-row gap-2 items-center pl-2 py-2 px-3'>
         <BackButton />
         <p className='px-3 py-2 text-[#02B1AB]'>
-          <b>Mã đơn:</b> {formatOrderIdWithoutCreateAt(deliveryId)}
+          <b>Mã đơn:</b> {formatDeliveryIdWithoutCreateAt(deliveryId)}
         </p>
 
         <div className='ml-auto flex items-center gap-2'>

@@ -1,23 +1,27 @@
-import { Order } from '@/utils/response';
-import { chunk } from '@/utils/array';
-import { Button, Checkbox, Pagination, Table, Text } from '@mantine/core';
-import { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
-import { formatMoney, formatOrderId } from '@/utils/string';
+import { Order } from '@/utils/response'
+import { chunk } from '@/utils/array'
+import { Button, Checkbox, Pagination, Table, Text } from '@mantine/core'
+import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
+import {
+  formatMoney,
+  formatOrderId,
+  formatOrderIdWithoutCreateAt,
+} from '@/utils/string'
 
 type tableType = {
-  id: string;
-  createAt: string;
-  customer: string;
-  paymentStatus: string;
-  shipmentStatus: string;
-  finalPrice: number;
-}[];
+  id: string
+  createAt: string
+  customer: string
+  paymentStatus: string
+  shipmentStatus: string
+  finalPrice: number
+}[]
 
 type Props = {
-  orders: Order[];
-};
+  orders: Order[]
+}
 
 const tableHeadList = [
   'Mã đơn hàng',
@@ -26,7 +30,7 @@ const tableHeadList = [
   'Thanh toán',
   'Giao hàng',
   'Tổng tiền',
-];
+]
 
 const tableHeadMapping = {
   id: 'Mã đơn hàng',
@@ -35,7 +39,7 @@ const tableHeadMapping = {
   paymentStatus: 'Thanh toán',
   shipmentStatus: 'Giao hàng',
   total: 'Tổng tiền',
-};
+}
 
 const shipmentStatusMapping = {
   pending: 'Chờ xác nhận',
@@ -45,15 +49,15 @@ const shipmentStatusMapping = {
   cancelled: 'Đã hủy',
   failed: 'Giao thất bại',
   delivered: 'Giao thành công',
-};
+}
 
 const paymentStatusMapping = {
   pending: 'Chưa thanh toán',
   paid: 'Đã thanh toán',
-};
+}
 export default function OrderTable({ orders }: Props) {
-  let currentPath = usePathname();
-  const router = useRouter();
+  let currentPath = usePathname()
+  const router = useRouter()
 
   const orderData: tableType = orders?.map((i: Order) => ({
     id: i._id,
@@ -62,26 +66,26 @@ export default function OrderTable({ orders }: Props) {
     paymentStatus: i.order_payment.status,
     shipmentStatus: i.order_status,
     finalPrice: i.order_checkout.finalPrice,
-  }));
+  }))
 
-  const tableHead = tableHeadList.map((i) => <Table.Th key={i}>{i}</Table.Th>);
+  const tableHead = tableHeadList.map((i) => <Table.Th key={i}>{i}</Table.Th>)
 
   const tableBody = orderData?.map((i) => (
     <Table.Tr key={i.id}>
-      <Table.Td>{formatOrderId(i.id, i.createAt)}</Table.Td>
+      <Table.Td>{formatOrderIdWithoutCreateAt(i.id)}</Table.Td>
       <Table.Td>{i.createAt}</Table.Td>
       <Table.Td>{i.customer}</Table.Td>
       <Table.Td>
         {
           paymentStatusMapping[
-          i.paymentStatus as keyof typeof paymentStatusMapping
+            i.paymentStatus as keyof typeof paymentStatusMapping
           ]
         }
       </Table.Td>
       <Table.Td>
         {
           shipmentStatusMapping[
-          i.shipmentStatus as keyof typeof shipmentStatusMapping
+            i.shipmentStatus as keyof typeof shipmentStatusMapping
           ]
         }
       </Table.Td>
@@ -96,7 +100,7 @@ export default function OrderTable({ orders }: Props) {
         <Text c='turquoise'>Xem</Text>
       </Table.Td>
     </Table.Tr>
-  ));
+  ))
   return (
     <Table
       highlightOnHover
@@ -108,5 +112,5 @@ export default function OrderTable({ orders }: Props) {
       </Table.Thead>
       <Table.Tbody>{tableBody}</Table.Tbody>
     </Table>
-  );
+  )
 }

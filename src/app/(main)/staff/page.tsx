@@ -9,6 +9,7 @@ import {
   checkPasswordFormat,
   checkPhoneFormat,
 } from '@/utils/regex'
+import { formatStaffIdWithoutCreateAt } from '@/utils/string'
 import {
   Button,
   Group,
@@ -212,7 +213,9 @@ export default function ManageStaffPage() {
               <Table.Tbody>
                 {staffs.data?.map((item) => (
                   <Table.Tr key={`row-${item._id}`}>
-                    <Table.Td>{item._id}</Table.Td>
+                    <Table.Td>
+                      {formatStaffIdWithoutCreateAt(item._id)}
+                    </Table.Td>
                     <Table.Td>{item.display_name}</Table.Td>
                     <Table.Td>
                       {dayjs(item.createdAt).format('DD/MM/YYYY')}

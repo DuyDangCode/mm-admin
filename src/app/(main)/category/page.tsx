@@ -3,6 +3,7 @@ import UserContext from '@/contexts/UserContext'
 import queryClient from '@/helpers/client'
 import { categoryService } from '@/services/categoryService'
 import { Category } from '@/utils/response'
+import { formatCatergoryIdWithoutCreateAt } from '@/utils/string'
 import {
   Button,
   Group,
@@ -203,7 +204,9 @@ export default function ManageStaffPage() {
               <Table.Tbody>
                 {categories.data?.map((item) => (
                   <Table.Tr key={`row-${item._id}`}>
-                    <Table.Td>{item._id}</Table.Td>
+                    <Table.Td>
+                      {formatCatergoryIdWithoutCreateAt(item._id)}
+                    </Table.Td>
                     <Table.Td>{item.category_name}</Table.Td>
                     <Table.Td>
                       {dayjs(item.createdAt).format('DD/MM/YYYY')}

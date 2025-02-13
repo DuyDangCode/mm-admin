@@ -2,6 +2,10 @@
 import UserContext from '@/contexts/UserContext'
 import VoucherService from '@/services/voucherService'
 import {
+  formatOrderIdWithoutCreateAt,
+  formatVoucherIdWithoutCreateAt,
+} from '@/utils/string'
+import {
   Button,
   Group,
   Loader,
@@ -82,7 +86,9 @@ export default function ManageVoucherPage() {
               <Table.Tbody>
                 {vouchers.data?.map((voucher) => (
                   <Table.Tr key={`row-${voucher._id}`}>
-                    <Table.Td>{voucher._id}</Table.Td>
+                    <Table.Td>
+                      {formatVoucherIdWithoutCreateAt(voucher._id)}
+                    </Table.Td>
                     <Table.Td>{voucher.discount_name}</Table.Td>
                     <Table.Td>{voucher.discount_code}</Table.Td>
                     <Table.Td>

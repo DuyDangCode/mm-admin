@@ -3,6 +3,8 @@ import UserContext from '@/contexts/UserContext'
 import { productService } from '@/services/productService'
 import {
   ActionIcon,
+  Modal,
+  FileInput,
   Box,
   Group,
   ScrollArea,
@@ -44,6 +46,7 @@ import DescInfoForm from './descInfoForm'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import queryClient from '@/helpers/client'
+import { FilePreview } from '@/types/file'
 
 const ImageLink = 'https://blog.alliedmarketresearch.com/images/user_icon.png'
 function GeneralInfoField({
@@ -93,11 +96,16 @@ export default function WarehouseProductPage({
   const [scroll, scrollTo] = useWindowScroll()
   const productId = use(params).product_id
   const state = use(searchParams).state
+  const [productImage, setProductImage] = useState<string>()
+  const [productImageInput, setProductImageInput] = useState<FilePreview>()
+  const [opened, { open, close }] = useDisclosure(false)
 
   const target_product = useQuery({
     queryKey: ['target_product', productId],
-    queryFn: () => {
-      return productService.getProductById(productId)
+    queryFn: async () => {
+      const productInfo = await productService.getProductById(productId)
+      setProductImage(productInfo?.product_thumb)
+      return productInfo
     },
     enabled: !!user,
   })
@@ -161,6 +169,29 @@ export default function WarehouseProductPage({
     },
   })
 
+  const updateProductImageMutation = useMutation({
+    mutationKey: ['update product image', productId],
+    mutationFn: (newImage: File) => {
+      const updateProductImagePromise = productService.updateProductImage(
+        user,
+        productId,
+        newImage,
+      )
+      toast.promise(updateProductImagePromise, {
+        success: "Cập nhập thành công'",
+        error: 'Cập nhập thất bại.',
+        loading: 'Đang xử lý',
+      })
+      return updateProductImagePromise
+    },
+  })
+  const selectProductImage = (newImage: File | null) => {
+    if (!newImage) return
+    setProductImageInput({
+      file: newImage,
+      previewUrl: URL.createObjectURL(newImage),
+    })
+  }
   const handleRateClick = (id: number) => {
     setIsRatechoosing(id)
   }
@@ -268,19 +299,84 @@ export default function WarehouseProductPage({
                 h='auto'
                 mah={200}
                 fit='contain'
-                src={target_product.data?.product_thumb}
+                src={productImage}
               />
 
               {/* </div> */}
               {/* </AspectRatio> */}
-              <Popover width={200} position='bottom' withArrow shadow='md'>
-                <Popover.Target>
-                  <Button variant='light'>Thay ảnh</Button>
-                </Popover.Target>
-                <Popover.Dropdown>
-                  <Text size='xs'>{futherSaveImgSolution}</Text>
-                </Popover.Dropdown>
-              </Popover>
+
+              <Button
+                variant='light'
+                onClick={() => {
+                  open()
+                }}
+              >
+                Thay ảnh
+              </Button>
+              <Modal
+                opened={opened}
+                onClose={() => {
+                  close()
+                  setProductImage(undefined)
+                }}
+                centered
+              >
+                <Stack>
+                  <Stack>
+                    {/* <Text>Chọn ảnh</Text> */}
+                    {productImageInput && (
+                      <img
+                        src={productImageInput?.previewUrl}
+                        style={{ width: '200px', height: 'auto' }}
+                      />
+                    )}
+                    <FileInput
+                      accept='image/*'
+                      withAsterisk
+                      clearable
+                      onChange={selectProductImage}
+                      placeholder='Chọn ảnh'
+                    />
+                  </Stack>
+                  <Group w={'100%'} justify='space-evenly'>
+                    <Button
+                      h={'1.25 rem'}
+                      bg={'transparent'}
+                      className='text-[#02B1AB] border-0 hover:text-[#02B1AB]'
+                      onClick={async () => {
+                        if (!productImageInput?.file) return
+                        setProductImage(productImageInput.previewUrl)
+                        setProductImageInput(undefined)
+                        close()
+                        updateProductImageMutation.mutate(
+                          productImageInput.file,
+                        )
+                      }}
+                    >
+                      Lưu
+                    </Button>
+                    <Button
+                      h={'1.25 rem'}
+                      bg={'transparent'}
+                      className=' text-[#02B1AB] border-0 hover:text-[#02B1AB]'
+                      onClick={() => {
+                        setProductImageInput(undefined)
+                        close()
+                      }}
+                    >
+                      Hủy
+                    </Button>
+                  </Group>
+                </Stack>
+              </Modal>
+
+              {/* <Popover width={200} position='bottom' withArrow shadow='md'> */}
+              {/*   <Popover.Target> */}
+              {/*   </Popover.Target> */}
+              {/*   <Popover.Dropdown> */}
+              {/*     <Text size='xs'>{futherSaveImgSolution}</Text> */}
+              {/*   </Popover.Dropdown> */}
+              {/* </Popover> */}
             </Stack>
           </Group>
           {descEdit === false ? (

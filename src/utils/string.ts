@@ -26,10 +26,31 @@ const formatOrderId = (id: string, createdAt: string) => {
     id.slice(-3)
   )
 }
-const formatOrderIdWithoutCreateAt = (id: string) => {
-  return 'MM' + id.slice(-8)
-}
 
+const formatIdWithoutCreateAt = (prefix: string, id: string) => {
+  return prefix + '-' + id.slice(0, 8) + '-' + id.slice(8, 16)
+}
+const formatOrderIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('MM', id)
+}
+const formatVoucherIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('VC', id)
+}
+const formatDeliveryIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('D', id)
+}
+const formatCatergoryIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('C', id)
+}
+const formatStaffIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('S', id)
+}
+const formatExportBillIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('EB', id)
+}
+const formatImportBillIdWithoutCreateAt = (id: string) => {
+  return formatIdWithoutCreateAt('IB', id)
+}
 const formatExportBillId = (id: string, createdAt: string) => {
   const parts = [...createdAt.split('/')]
   return (
@@ -70,5 +91,10 @@ export {
   formatImportBillId,
   formatDate,
   formatOrderIdWithoutCreateAt,
+  formatVoucherIdWithoutCreateAt,
+  formatStaffIdWithoutCreateAt,
+  formatCatergoryIdWithoutCreateAt,
+  formatDeliveryIdWithoutCreateAt,
+  formatImportBillIdWithoutCreateAt,
+  formatExportBillIdWithoutCreateAt,
 }
-

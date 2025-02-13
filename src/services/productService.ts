@@ -91,6 +91,26 @@ const createProduct = async (
       throw new Error(error.response.data.message)
     })
 }
+const updateProductImage = async (
+  user: UserInterface,
+  id: string,
+  thumb: any,
+): Promise<any> => {
+  const formData = new FormData()
+  if (thumb) formData.append('thumb', thumb)
+  return await axios
+    .patch(`${constant.BASE_URL}/product/${id}`, formData, {
+      headers: {
+        'x-api-key': constant.API_KEY,
+        'x-client-id': user.userId,
+        authorization: user.accessToken,
+      },
+    })
+    .then((res) => res.data.metadata)
+    .catch((error) => {
+      throw new Error(error.response.data.message)
+    })
+}
 
 const getProductById = async (id: string): Promise<Product> => {
   return await axios
@@ -179,4 +199,5 @@ export const productService = {
   createProduct,
   unpublish,
   publish,
+  updateProductImage,
 }
